@@ -1,0 +1,12 @@
+[user]
+	name = Deepak Khidia
+	email = deepak.khidia@idealo.de
+[color]
+	ui = auto
+[push]
+	default = current
+[pull] 
+	default = current
+	rebase = true
+[merge]
+	tool = vimdiff
