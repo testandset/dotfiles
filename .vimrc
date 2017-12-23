@@ -37,6 +37,9 @@ let g:mapleader = " "
 " Fast saving
 nmap <leader>w :w!<cr>
 
+" open vimrc
+nmap <leader>v :tabedit $MYVIMRC<CR>
+
 " :W sudo saves the file 
 " (useful for handling the permission-denied error)
 command W w !sudo tee % > /dev/null
@@ -48,7 +51,7 @@ set number relativenumber
 " => VIM user interface
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Set 7 lines to the cursor - when moving vertically using j/k
-set so=7
+set so=3
 
 " Avoid garbled characters in Chinese language windows OS
 let $LANG='en' 
@@ -326,6 +329,10 @@ map <leader>x :e ~/buffer.md<cr>
 map <leader>pp :setlocal paste!<cr>
 
 
+" Source vimrc when changed
+if has("autocmd")
+    autocmd bufwritepost .vimrc source $MYVIMRC
+endif
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Helper functions
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
