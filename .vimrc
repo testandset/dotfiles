@@ -22,6 +22,8 @@
 " Sets how many lines of history VIM has to remember
 set history=500
 
+set undolevels=700
+
 " Enable filetype plugins
 filetype plugin on
 filetype indent on
@@ -113,14 +115,14 @@ set t_vb=
 set tm=500
 
 " Properly disable sound on errors on MacVim
-if has("gui_macvim")
-    autocmd GUIEnter * set vb t_vb=
-endif
+autocmd GUIEnter * set vb t_vb=
 
 
 " Add a bit extra margin to the left
 set foldcolumn=1
 
+set splitbelow
+set splitright
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Colors and Fonts
