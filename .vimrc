@@ -11,10 +11,11 @@
 "    -> vimgrep searching and cope displaying
 "    -> Spell checking
 "    -> Misc
+"    -> Language Specific
 "    -> Helper functions
-"
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
+source  ~/dotfiles/vimconfig/vundle.vim "vundle settings
+source  ~/dotfiles/vimconfig/bindings.vim "custom bindin
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => General
@@ -335,6 +336,13 @@ map <leader>pp :setlocal paste!<cr>
 if has("autocmd")
     autocmd bufwritepost .vimrc source $MYVIMRC
 endif
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Language Specific
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+source ~/dotfiles/vimconfig/python.vim 
+
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Helper functions
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
