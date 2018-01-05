@@ -1,4 +1,5 @@
 " Sections:
+"    -> Vundle config
 "    -> General
 "    -> VIM user interface
 "    -> Colors and Fonts
@@ -13,9 +14,35 @@
 "    -> Misc
 "    -> Language Specific
 "    -> Helper functions
+
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-source  ~/dotfiles/vimconfig/vundle.vim "vundle settings
-source  ~/dotfiles/vimconfig/bindings.vim "custom bindin
+" Vundle set-up
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+set nocompatible              " required
+filetype off                  " required
+
+" set the runtime path to include Vundle and initialize
+set rtp+=~/.vim/bundle/Vundle.vim
+call vundle#begin()
+
+" alternatively, pass a path where Vundle should install plugins
+"call vundle#begin('~/some/path/here')
+
+" let Vundle manage Vundle, required
+Plugin 'gmarik/Vundle.vim'
+
+" Add all your plugins here (note older versions of Vundle used Bundle instead of Plugin)
+Plugin 'python-mode/python-mode'
+Plugin 'scrooloose/nerdtree'
+Plugin 'kien/ctrlp.vim'
+Plugin 'tpope/vim-git'
+Plugin 'tpope/vim-fugitive'
+Plugin 'powerline/powerline', {'rtp': 'powerline/bindings/vim/'}
+Plugin 'vim-scripts/ZoomWin'
+
+" All of your Plugins must be added before the following line
+call vundle#end()            " required
+filetype plugin indent on    " required
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => General
@@ -45,7 +72,7 @@ nmap <leader>v :tabedit $MYVIMRC<CR>
 
 " :W sudo saves the file 
 " (useful for handling the permission-denied error)
-command W w !sudo tee % > /dev/null
+command! W w !sudo tee % > /dev/null
 
 " set hybrid numbering
 set number relativenumber
@@ -299,7 +326,7 @@ fun! CleanExtraSpaces()
 endfun
 
 if has("autocmd")
-    autocmd BufWritePre *.txt,*.js,*.py,*.wiki,*.sh,*.coffee :call CleanExtraSpaces()
+    autocmd BufWritePre *.txt,*.js,*.py,*.wiki,*.sh,:call CleanExtraSpaces()
 endif
 
 
@@ -314,7 +341,6 @@ map <leader>sn ]s
 map <leader>sp [s
 map <leader>sa zg
 map <leader>s? z=
-
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Misc
@@ -331,12 +357,16 @@ map <leader>x :e ~/buffer.md<cr>
 " Toggle paste mode on and off
 map <leader>pp :setlocal paste!<cr>
 
-
 " Source vimrc when changed
 if has("autocmd")
     autocmd bufwritepost .vimrc source $MYVIMRC
 endif
 
+" Open help in lef split
+augroup vimrc_help
+  autocmd!
+  autocmd BufEnter *.txt if &buftype == 'help' | wincmd L | endif
+augroup END
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Language Specific
