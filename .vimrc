@@ -39,6 +39,8 @@ Plugin 'tpope/vim-git'
 Plugin 'tpope/vim-fugitive'
 Plugin 'powerline/powerline', {'rtp': 'powerline/bindings/vim/'}
 Plugin 'vim-scripts/ZoomWin'
+Plugin 'sickill/vim-pasta'
+
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
