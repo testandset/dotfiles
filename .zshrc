@@ -96,4 +96,4 @@ source $ZSH/oh-my-zsh.sh
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 alias c=clear
-eval "$(jenv init -)"
+#eval "$(jenv init -)"
