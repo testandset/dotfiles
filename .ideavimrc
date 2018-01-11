@@ -43,7 +43,7 @@ command W w !sudo tee % > /dev/null
 
 " set hybrid numbering
 set number relativenumber
-
+set vim-surround
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => VIM user interface
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
