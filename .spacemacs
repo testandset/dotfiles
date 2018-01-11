@@ -327,6 +327,9 @@ This is the place where most of your configurations should be done. Unless it is
 explicitly specified that a variable should be set before a package is loaded,
 you should place your code here."
 
+  ;; Disable default emacs version control.
+  (setq vc-handled-backends nil)
+
   (define-key evil-insert-state-map (kbd "C-a") `evil-paste-last-insertion)
 
   ;; Move visual lines instead of actual lines
