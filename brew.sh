@@ -30,6 +30,7 @@ brew install openssh
 brew install emacs
 brew install emacs-plus
 
+brew install the_silver_searcher
 brew install jenv
 brew install mas
 brew install cask
