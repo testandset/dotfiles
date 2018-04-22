@@ -1,11 +1,11 @@
 [user]
 	name = Deepak Khidia
-	email = deepak.khidia@idealo.de
+	email = deepakk@spotify.com
 [color]
 	ui = auto
 [push]
 	default = current
-[pull] 
+[pull]
 	default = current
 	rebase = true
 [merge]
