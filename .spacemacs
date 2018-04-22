@@ -32,6 +32,8 @@ values."
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
    '(
+     sql
+     php
      yaml
      ;;----------------------
      ;; Programming languages 
