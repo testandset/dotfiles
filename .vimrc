@@ -394,7 +394,7 @@ augroup END
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Language Specific
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-source ~/dotfiles/vimconfig/python.vim 
+source ~/repos/dotfiles/vimconfig/python.vim 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Helper functions
