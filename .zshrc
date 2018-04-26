@@ -63,6 +63,7 @@ plugins=(
   git
   zsh-autosuggestions
   zsh-syntax-highlighting
+  pyenv
 )
 
 source $ZSH/oh-my-zsh.sh
@@ -96,4 +97,11 @@ source $ZSH/oh-my-zsh.sh
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 alias c=clear
-#eval "$(jenv init -)"
+
+# pyenv set-up
+export PYENV_ROOT="$HOME/.pyenv"
+export PATH="$PYENV_ROOT/bin:$PATH"
+
+if command -v pyenv 1>/dev/null 2>&1; then
+    eval "$(pyenv init -)"
+fi
