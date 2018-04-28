@@ -17,3 +17,6 @@ Thumbs.db
 # Itellij classes
 *.ipr
 *.iws
+
+# projectile files
+.projectile
