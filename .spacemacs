@@ -351,7 +351,10 @@ you should place your code here."
   ;; Move visual lines instead of actual lines
   (define-key evil-normal-state-map (kbd "j") 'evil-next-visual-line)
   (define-key evil-normal-state-map (kbd "k") 'evil-previous-visual-line)
+
+  ;; Switch buffers
   (define-key evil-normal-state-map (kbd "M-<tab>") 'previous-buffer)
+  (define-key evil-normal-state-map (kbd "M-s-<tab>") 'previous-buffer)
 
   ;; Swap evil s to evil-avy-goto-char-2
   (define-key evil-normal-state-map (kbd "s") 'evil-avy-goto-char-2)
