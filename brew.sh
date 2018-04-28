@@ -42,6 +42,7 @@ brew install git-lfs
 brew install pv
 brew install rename
 brew install tree
+brew install ctags
 
 # Remove outdated versions from the cellar.
 brew cleanup
