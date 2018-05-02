@@ -41,7 +41,7 @@ values."
      yaml
      ;; javascript
      ;; groovy
-     python
+     (python :variables python-test-runner 'nose)
      ;; java
      html
      vimscript
