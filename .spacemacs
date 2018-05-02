@@ -366,6 +366,7 @@ you should place your code here."
   ;; (setq eclim-executable "/Users/deepak.khidia/.p2/pool/plugins/org.eclim_2.7.1/bin/eclim"
   ;;       eclim-eclipse-dirs '("/Users/deepak.khidia/eclipse/java-oxygen/Eclipse.app"))
 
+  (setq projectile-enable-caching t)
   )
 
 ;; Do not write anything past this comment. This is where Emacs will
