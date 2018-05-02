@@ -20,3 +20,9 @@ Thumbs.db
 
 # projectile files
 .projectile
+
+# tags file
+TAGS
+
+# pyenv file
+.python-version
