@@ -44,5 +44,8 @@ brew install rename
 brew install tree
 brew install ctags
 
+# spell check
+brew install ispell --with-lang-en
+
 # Remove outdated versions from the cellar.
 brew cleanup
