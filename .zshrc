@@ -64,6 +64,7 @@ plugins=(
   zsh-autosuggestions
   zsh-syntax-highlighting
   pyenv
+  vi-mode
 )
 
 source $ZSH/oh-my-zsh.sh
@@ -105,3 +106,7 @@ export PATH="$PYENV_ROOT/bin:$PATH"
 if command -v pyenv 1>/dev/null 2>&1; then
     eval "$(pyenv init -)"
 fi
+
+
+# add dbin to path
+export PATH="$HOME/dbin:$PATH"
