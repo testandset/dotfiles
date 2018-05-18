@@ -388,6 +388,10 @@ you should place your code here."
 
   ;; Open new files in an existing frame if there is one
   (setq ns-pop-up-frames nil)
+
+  ;; Scrolling
+  (setq mouse-wheel-scroll-amount '(3 ((shift) . 1) ((control) . nil)))
+  (setq mouse-wheel-progressive-speed nil)
   )
 
 ;; Do not write anything past this comment. This is where Emacs will
