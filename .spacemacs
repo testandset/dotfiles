@@ -86,7 +86,11 @@ values."
    ;; wrapped in a layer. If you need some configuration for these
    ;; packages, then consider creating a layer. You can also put the
    ;; configuration in `dotspacemacs/user-config'.
-   dotspacemacs-additional-packages '()
+   dotspacemacs-additional-packages '(
+                                      sr-speedbar
+                                      all-the-icons
+                                      fzf
+                                      )
    ;; A list of packages that cannot be updated.
    dotspacemacs-frozen-packages '()
    ;; A list of packages that will not be installed and loaded.
@@ -363,6 +367,11 @@ you should place your code here."
 
   ;; Swap evil s to evil-avy-goto-char-2
   (define-key evil-normal-state-map (kbd "s") 'evil-avy-goto-char-2)
+
+  (spacemacs/set-leader-keys
+    "bo" 'switch-to-buffer-other-window
+    "ff" 'fzf-directory
+    "pf" 'fzf-projectile)
 
   ;; enable auto-complete globally
   (global-company-mode)
