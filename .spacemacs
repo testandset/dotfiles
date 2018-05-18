@@ -385,6 +385,9 @@ you should place your code here."
   ;;       eclim-eclipse-dirs '("/Users/deepak.khidia/eclipse/java-oxygen/Eclipse.app"))
 
   (setq projectile-enable-caching t)
+
+  ;; Open new files in an existing frame if there is one
+  (setq ns-pop-up-frames nil)
   )
 
 ;; Do not write anything past this comment. This is where Emacs will
