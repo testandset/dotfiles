@@ -365,6 +365,10 @@ you should place your code here."
         browse-url-generic-program "chrome")
 
   (setenv "BROWSER" "chrome")
+
+  ;; evil-escape universal
+  (setq-default evil-escape-key-sequence "jk")
+
   ;; trun on evil-mc globally
   (global-evil-mc-mode)
 
