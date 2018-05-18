@@ -352,6 +352,16 @@ This is the place where most of your configurations should be done. Unless it is
 explicitly specified that a variable should be set before a package is loaded,
 you should place your code here."
 
+  (defun dee/maximize-vertically ()
+    "Delete all windows up or down of the current window."
+    (interactive)
+    (require 'windmove)
+    (save-excursion
+      (while (condition-case nil (windmove-down) (error nil))
+        (delete-window))
+      (while (condition-case nil (windmove-up) (error nil))
+        (delete-window))))
+
   ;; Enable icons
   (require 'all-the-icons)
   (setq neo-theme 'icons)
@@ -386,7 +396,9 @@ you should place your code here."
   (spacemacs/set-leader-keys
     "bo" 'switch-to-buffer-other-window
     "ff" 'fzf-directory
-    "pf" 'fzf-projectile)
+    "pf" 'fzf-projectile
+    "wn" 'dee/maximize-vertically
+    )
 
   ;; enable auto-complete globally
   (global-company-mode)
