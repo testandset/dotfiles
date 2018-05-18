@@ -387,8 +387,8 @@ you should place your code here."
   (define-key evil-normal-state-map (kbd "k") 'evil-previous-visual-line)
 
   ;; Switch buffers
-  (define-key evil-normal-state-map (kbd "M-<tab>") 'previous-buffer)
-  (define-key evil-normal-state-map (kbd "M-s-<tab>") 'previous-buffer)
+  (define-key evil-normal-state-map (kbd "C-;") 'winner-undo)
+  (define-key evil-normal-state-map (kbd "C-'") 'winner-redo)
 
   ;; Swap evil s to evil-avy-goto-char-2
   (define-key evil-normal-state-map (kbd "s") 'evil-avy-goto-char-2)
