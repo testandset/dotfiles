@@ -392,6 +392,10 @@ you should place your code here."
   ;; Scrolling
   (setq mouse-wheel-scroll-amount '(3 ((shift) . 1) ((control) . nil)))
   (setq mouse-wheel-progressive-speed nil)
+
+  ;; anaconda
+  (define-key evil-normal-state-map (kbd "M-.") 'anaconda-mode-find-definitions)
+  (define-key evil-normal-state-map (kbd "M-h") 'anaconda-mode-go-back)
   )
 
 ;; Do not write anything past this comment. This is where Emacs will
