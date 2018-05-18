@@ -358,6 +358,13 @@ you should place your code here."
   ;; enable this if icon loading is slow
   ;; (setq inhibit-compacting-font-caches t)
 
+  ;; Replace org ... with fancy
+  (setq org-ellipsis " ▼")
+
+  (setq browse-url-browser-function 'browse-url-generic
+        browse-url-generic-program "chrome")
+
+  (setenv "BROWSER" "chrome")
   ;; trun on evil-mc globally
   (global-evil-mc-mode)
 
