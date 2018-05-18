@@ -59,7 +59,6 @@ values."
                       auto-completion-complete-with-key-sequence-delay 0.1
                       auto-completion-private-snippets-directory nil)
      ;; better-defaults
-     git
      (org :variables
           org-enable-github-support t
 
@@ -72,6 +71,7 @@ values."
      (spell-checking :variables spell-checking-enable-by-default nil)
      syntax-checking
      ;; version-control
+     git
      osx
      (ibuffer :variables
               ibuffer-group-buffers-by 'projects)
