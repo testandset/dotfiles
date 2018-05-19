@@ -43,6 +43,7 @@ brew install pv
 brew install rename
 brew install tree
 brew install ctags
+brew install cscope
 
 # spell check
 brew install ispell --with-lang-en
