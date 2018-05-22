@@ -1,6 +1,7 @@
-# Compiled Python files
+# Compiled files
 *.pyc
 *.class
+*.out
 
 # Folder view configuration files
 .DS_Store
@@ -23,6 +24,9 @@ Thumbs.db
 
 # tags file
 TAGS
+GTAGS
+GPATH
+GRTAGS
 
 # pyenv file
 .python-version
