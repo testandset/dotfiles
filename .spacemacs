@@ -37,7 +37,7 @@ values."
      ;;----------------------
      markdown
      sql
-     php
+     ;; php
      yaml
      ;; javascript
      ;; groovy
@@ -48,6 +48,7 @@ values."
      emacs-lisp
      cscope
      imenu-list
+     ;; ycmd
      ;; ----------------------------------------------------------------
      ;; Example of useful layers you may want to use right away.
      ;; Uncomment some layer names and press <SPC f e R> (Vim style) or
@@ -91,6 +92,9 @@ values."
                                       sr-speedbar
                                       all-the-icons
                                       fzf
+                                      git-gutter
+                                      beacon
+                                      engine-mode
                                       )
    ;; A list of packages that cannot be updated.
    dotspacemacs-frozen-packages '()
@@ -369,23 +373,44 @@ you should place your code here."
   ;; enable this if icon loading is slow
   ;; (setq inhibit-compacting-font-caches t)
 
+  ;; Highlight cursor point on movement
+  (beacon-mode 1)
+  (spacemacs|diminish beacon-mode nil)
+
+  ;; search engines
+  (engine-mode t)
+  (engine/set-keymap-prefix (kbd "s-/"))
+  (defengine google
+    "http://www.google.com/search?ie=utf-8&oe=utf-8&q=%s"
+    )
+
   ;; Replace org ... with fancy
   (setq org-ellipsis " ▼")
-
   ;; (setq browse-url-browser-function 'browse-url-generic
   ;;       ;; browse-url-generic-program "chrome")
   ;;       )
 
+  (setq magit-repository-directories '("~/repos/"))
+  (global-git-gutter-mode t)
+  (git-gutter:linum-setup)
+  (custom-set-variables
+   '(git-gutter:hide-gutter t))
+  (spacemacs|diminish global-git-gutter-mode nil)
+  (spacemacs|diminish git-gutter-mode nil)
+
+  (spacemacs|diminish which-key-mode nil)
+  (spacemacs|diminish yas-minor-mode nil)
 
   ;; evil-escape universal
   (setq-default evil-escape-key-sequence "jk")
 
   ;; trun on evil-mc globally
-  (global-evil-mc-mode)
+  ;; (global-evil-mc-mode)
 
   ;; Move visual lines instead of actual lines
   (define-key evil-normal-state-map (kbd "j") 'evil-next-visual-line)
   (define-key evil-normal-state-map (kbd "k") 'evil-previous-visual-line)
+  (define-key evil-normal-state-map (kbd "DEL") 'pop-global-mark)
 
   ;; Window undo
   (define-key evil-normal-state-map (kbd "C-;") 'winner-undo)
@@ -393,7 +418,7 @@ you should place your code here."
 
   ;; search buffers
   (define-key evil-normal-state-map (kbd "s-b") 'helm-mini)
-  (define-key evil-normal-state-map (kbd "C-\\") 'helm-projectile-ag)
+  ;; (define-key evil-normal-state-map (kbd "C-\\") 'helm-projectile-ag)
 
   ;; Swap evil s to evil-avy-goto-char-2
   (define-key evil-normal-state-map (kbd "s") 'evil-avy-goto-char-2)
@@ -417,7 +442,10 @@ you should place your code here."
   (setq mouse-wheel-scroll-amount '(3 ((shift) . 1) ((control) . nil)))
   (setq mouse-wheel-progressive-speed nil)
 
-  ;; anaconda
+  ;; python
+  ;; (setq ycmd-server-command '("python" "/Users/deepakk/.vim/bundle/YouCompleteMe/third_party/ycmd/ycmd"))
+  ;; (setq ycmd-force-semantic-completion t)
+  ;; (add-hook 'python-mode-hook 'ycmd-mode)
   (define-key evil-normal-state-map (kbd "M-.") 'anaconda-mode-find-definitions)
   (define-key evil-normal-state-map (kbd "M-h") 'anaconda-mode-go-back)
 
@@ -431,9 +459,11 @@ you should place your code here."
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(evil-want-Y-yank-to-eol nil)
+ '(git-gutter:hide-gutter t)
+ '(git-gutter:lighter " ġ")
  '(package-selected-packages
    (quote
-    (imenu-list xkcd helm-cscope xcscope helm-gtags ggtags fzf all-the-icons memoize sr-speedbar typit mmt sudoku pacmacs 2048-game selectric-mode python-environment ctable concurrent deferred evil-snipe mmm-mode markdown-toc markdown-mode gh-md ibuffer-projectile company-web web-completion-data company-anaconda sql-indent phpunit phpcbf php-extras php-auto-yasnippets drupal-mode php-mode less-css-mode let-alist org-mime yaml-mode eclim web-mode tagedit slim-mode scss-mode sass-mode pug-mode helm-css-scss haml-mode emmet-mode ox-reveal ox-gfm org-projectile org-category-capture org-present org-pomodoro alert log4e gntp org-download htmlize gnuplot yapfify pyvenv pytest pyenv-mode py-isort pip-requirements live-py-mode hy-mode dash-functional helm-pydoc cython-mode anaconda-mode pythonic vimrc-mode dactyl-mode xterm-color shell-pop multi-term eshell-z eshell-prompt-extras esh-help helm-company helm-c-yasnippet fuzzy company-statistics company auto-yasnippet ac-ispell auto-complete ghub flyspell-correct-helm flyspell-correct flycheck-pos-tip pos-tip flycheck auto-dictionary smeargle orgit magit-gitflow helm-gitignore gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link evil-magit magit magit-popup git-commit with-editor web-beautify livid-mode skewer-mode simple-httpd json-mode json-snatcher json-reformat js2-refactor yasnippet multiple-cursors js2-mode js-doc coffee-mode reveal-in-osx-finder pbcopy osx-trash osx-dictionary launchctl ws-butler winum which-key volatile-highlights vi-tilde-fringe uuidgen use-package toc-org spaceline powerline restart-emacs request rainbow-delimiters popwin persp-mode pcre2el paradox spinner org-plus-contrib org-bullets open-junk-file neotree move-text macrostep lorem-ipsum linum-relative link-hint info+ indent-guide hydra hungry-delete hl-todo highlight-parentheses highlight-numbers parent-mode highlight-indentation hide-comnt help-fns+ helm-themes helm-swoop helm-projectile helm-mode-manager helm-make projectile pkg-info epl helm-flx helm-descbinds helm-ag google-translate golden-ratio flx-ido flx fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state smartparens evil-indent-plus evil-iedit-state iedit evil-exchange evil-escape evil-ediff evil-args evil-anzu anzu evil goto-chg undo-tree eval-sexp-fu highlight elisp-slime-nav dumb-jump f dash s diminish define-word column-enforce-mode clean-aindent-mode bind-map bind-key auto-highlight-symbol auto-compile packed aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line helm avy helm-core popup async)))
+    (engine-mode beacon seq git-gutter yasnippet-snippets flycheck-ycmd company-ycmd ycmd request-deferred imenu-list xkcd helm-cscope xcscope helm-gtags ggtags fzf all-the-icons memoize sr-speedbar typit mmt sudoku pacmacs 2048-game selectric-mode python-environment ctable concurrent deferred evil-snipe mmm-mode markdown-toc markdown-mode gh-md ibuffer-projectile company-web web-completion-data company-anaconda sql-indent phpunit phpcbf php-extras php-auto-yasnippets drupal-mode php-mode less-css-mode let-alist org-mime yaml-mode eclim web-mode tagedit slim-mode scss-mode sass-mode pug-mode helm-css-scss haml-mode emmet-mode ox-reveal ox-gfm org-projectile org-category-capture org-present org-pomodoro alert log4e gntp org-download htmlize gnuplot yapfify pyvenv pytest pyenv-mode py-isort pip-requirements live-py-mode hy-mode dash-functional helm-pydoc cython-mode anaconda-mode pythonic vimrc-mode dactyl-mode xterm-color shell-pop multi-term eshell-z eshell-prompt-extras esh-help helm-company helm-c-yasnippet fuzzy company-statistics company auto-yasnippet ac-ispell auto-complete ghub flyspell-correct-helm flyspell-correct flycheck-pos-tip pos-tip flycheck auto-dictionary smeargle orgit magit-gitflow helm-gitignore gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link evil-magit magit magit-popup git-commit with-editor web-beautify livid-mode skewer-mode simple-httpd json-mode json-snatcher json-reformat js2-refactor yasnippet multiple-cursors js2-mode js-doc coffee-mode reveal-in-osx-finder pbcopy osx-trash osx-dictionary launchctl ws-butler winum which-key volatile-highlights vi-tilde-fringe uuidgen use-package toc-org spaceline powerline restart-emacs request rainbow-delimiters popwin persp-mode pcre2el paradox spinner org-plus-contrib org-bullets open-junk-file neotree move-text macrostep lorem-ipsum linum-relative link-hint info+ indent-guide hydra hungry-delete hl-todo highlight-parentheses highlight-numbers parent-mode highlight-indentation hide-comnt help-fns+ helm-themes helm-swoop helm-projectile helm-mode-manager helm-make projectile pkg-info epl helm-flx helm-descbinds helm-ag google-translate golden-ratio flx-ido flx fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state smartparens evil-indent-plus evil-iedit-state iedit evil-exchange evil-escape evil-ediff evil-args evil-anzu anzu evil goto-chg undo-tree eval-sexp-fu highlight elisp-slime-nav dumb-jump f dash s diminish define-word column-enforce-mode clean-aindent-mode bind-map bind-key auto-highlight-symbol auto-compile packed aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line helm avy helm-core popup async)))
  '(scroll-conservatively 0)
  '(spacemacs-large-file-modes-list
    (quote
