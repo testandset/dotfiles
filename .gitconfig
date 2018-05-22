@@ -10,5 +10,6 @@
 	rebase = true
 [merge]
 	tool = vimdiff
+	conflictStyle = diff3
 [core]
 	excludesfile = /Users/deepakk/.gitignore
