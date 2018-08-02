@@ -108,5 +108,3 @@ if command -v pyenv 1>/dev/null 2>&1; then
 fi
 
 
-# add dbin to path
- export PATH="$HOME/dbin:$PATH"
