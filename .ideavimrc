@@ -118,11 +118,6 @@ set wrap "Wrap lines
 """"""""""""""""""""""""""""""
 " => Visual mode related
 """"""""""""""""""""""""""""""
-" Visual mode pressing * or # searches for the current selection
-" Super useful! From an idea by Michael Naumann
-vnoremap <silent> * :<C-u>call VisualSelection('', '')<CR>/<C-R>=@/<CR><CR>
-vnoremap <silent> # :<C-u>call VisualSelection('', '')<CR>?<C-R>=@/<CR><CR>
-
 " don't lose selection when indenting
 vnoremap < <gv
 vnoremap > >gv
@@ -140,7 +135,9 @@ vnoremap = =gv
 " Disable highlight when <leader><cr> is pressed
 map <silent> <leader><cr> :noh<cr>
 
-" Smart way to move between windows
+nnoremap gh gT
+nnoremap gl gt
+
 nnoremap <leader>wl <C-W>l
 nnoremap <leader>wh <C-W>h
 nnoremap <leader>wj <C-W>j
@@ -196,10 +193,10 @@ nmap <leader>wo :action MoveEditorToOppositeTabGroup<cr>
 nmap <leader>gt :action GotoTest<cr>
 nmap <leader>oi :action OptimizeImports<cr>
 nmap <leader>se :action RenameElement<cr>
-nmap <C-o> :action Back<CR>
-nmap <C-i> :action Forward<CR>
+nmap <C-o> :action Back<cr>
+nmap <C-i> :action Forward<cr>
+nmap <leader>ee :action Tool_Editors_Emacs<cr>
 
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Helper functions
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
