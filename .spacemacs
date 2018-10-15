@@ -407,6 +407,9 @@ you should place your code here."
   (define-key evil-normal-state-map (kbd "k") 'evil-previous-visual-line)
   (define-key evil-normal-state-map (kbd "DEL") 'pop-global-mark)
 
+  ;; enter to ex
+  (define-key evil-normal-state-map (kbd "RET") 'evil-ex)
+
   ;; Window undo
   (define-key evil-normal-state-map (kbd "C-;") 'winner-undo)
   (define-key evil-normal-state-map (kbd "C-\'") 'winner-redo)
@@ -454,7 +457,7 @@ you should place your code here."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(evil-want-Y-yank-to-eol nil)
+ '(evil-want-Y-yank-to-eol t)
  '(git-gutter:hide-gutter t)
  '(git-gutter:lighter " ġ")
  '(helm-buffer-max-length 40)
