@@ -144,7 +144,7 @@ nnoremap <leader>wj <C-W>j
 nnoremap <leader>wk <C-W>k
 "nnoremap <leader>wd <C-W>c
 nnoremap <leader>wd :action CloseActiveTab<cr>
-nnoremap <leader>w\\ <C-W>c
+nnoremap <leader>w\\cit: <C-W>c
 nnoremap <leader>w- <C-W>s
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Editing mappings
@@ -167,19 +167,13 @@ nnoremap <leader>w- <C-W>s
 " => Misc
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Quickly open a buffer for scribble
-map <leader>q :e ~/buffer<cr>
-
-" Quickly open a markdown buffer for scribble
-map <leader>x :e ~/buffer.md<cr>
+map <leader>bs :e ~/scratch<cr>
 
 " Open .ideavimrc
 map <leader>fed :e ~/.ideavimrc<cr>
 
 " Reload settings
 map <leader>feR :source ~/.ideavimrc<cr>
-
-" Enter the command-line mode
-noremap <CR> :
 
 " Editor actions
 nmap s :action AceAction<cr>
@@ -196,7 +190,8 @@ nmap <leader>se :action RenameElement<cr>
 nmap <C-o> :action Back<cr>
 nmap <C-i> :action Forward<cr>
 nmap <leader>ee :action Tool_Editors_Emacs<cr>
-
+nmap = :action ReformatCode<cr>
+nmap <leader>zr :action EditorResetFontSize<cr>
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Helper functions
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
