@@ -462,7 +462,7 @@ you should place your code here."
           (quote
            (archive-mode tar-mode jka-compr git-commit-mode image-mode doc-view-mode doc-view-mode-maybe ebrowse-tree-mode pdf-view-mode tags-table-mode)))
    (setq synosaurus-backend (quote synosaurus-backend-wordnet))
-   (setq vc-follow-symlinks nil)
+   (setq vc-follow-symlinks t)
   )
 
 ;; Do not write anything past this comment. This is where Emacs will
