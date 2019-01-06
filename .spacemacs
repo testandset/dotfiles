@@ -33,9 +33,6 @@ values."
    dotspacemacs-configuration-layers
    '(
      javascript
-     ;;----------------------
-     ;; Programming languages
-     ;;----------------------
      go
      markdown
      sql
@@ -94,6 +91,7 @@ values."
                                       engine-mode
                                       helm-codesearch
                                       org-jira
+                                      synosaurus ;;thesaurus
                                       )
    ;; A list of packages that cannot be updated.
    dotspacemacs-frozen-packages '()
@@ -114,11 +112,6 @@ This function is called at the very startup of Spacemacs initialization
 before layers configuration.
 You should not put any user code in there besides modifying the variable
 values."
-
-  ;; TODO: remove this
-  ;; Load tramp to stop error. See https://github.com/syl20bnr/spacemacs/issues/9563
-  (require 'tramp)
-
   ;; This setq-default sexp is an exhaustive list of all the supported
   ;; spacemacs settings.
   (setq-default
@@ -273,7 +266,7 @@ values."
    ;; If non nil the frame is maximized when Emacs starts up.
    ;; Takes effect only if `dotspacemacs-fullscreen-at-startup' is nil.
    ;; (default nil) (Emacs 24.4+ only)
-   dotspacemacs-maximized-at-startup nil
+   dotspacemacs-maximized-at-startup t
    ;; A value from the range (0..100), in increasing opacity, which describes
    ;; the transparency level of a frame when it's active or selected.
    ;; Transparency can be toggled through `toggle-transparency'. (default 90)
@@ -305,7 +298,7 @@ values."
    ;;                       text-mode
    ;;   :size-limit-kb 1000)
    ;; (default nil)
-   dotspacemacs-line-numbers `relative
+   dotspacemacs-line-numbers 'relative
    ;; Code folding method. Possible values are `evil' and `origami'.
    ;; (default 'evil)
    dotspacemacs-folding-method 'evil
@@ -346,6 +339,9 @@ executes.
  This function is mostly useful for variables that need to be set
 before packages are loaded. If you are unsure, you should try in setting them in
 `dotspacemacs/user-config' first."
+
+  ;; ignore path variable check
+  (setq exec-path-from-shell-check-startup-files nil)
   )
 
 (defun dotspacemacs/user-config ()
@@ -388,19 +384,20 @@ you should place your code here."
   (engine/set-keymap-prefix (kbd "s-/"))
   (defengine google
     "http://www.google.com/search?ie=utf-8&oe=utf-8&q=%s"
+    :keybinding "g"
     )
 
   ;; Replace org ... with fancy
   (setq org-ellipsis " ▼")
 
   (setq magit-repository-directories '("~/repos/"))
-  (global-git-gutter-mode t)
+  (setq global-git-gutter-mode t)
+  (setq git-gutter:hide-gutter t)
+  (setq git-gutter:lighter " ġ")
   (git-gutter:linum-setup)
-  (custom-set-variables
-   '(git-gutter:hide-gutter t))
+
   (spacemacs|diminish global-git-gutter-mode nil)
   (spacemacs|diminish git-gutter-mode nil)
-
   (spacemacs|diminish which-key-mode nil)
   (spacemacs|diminish yas-minor-mode nil)
 
@@ -422,23 +419,19 @@ you should place your code here."
   (define-key evil-normal-state-map (kbd "C-\'") 'winner-redo)
 
   ;; search buffers
-  ;; (define-key evil-normal-state-map (kbd "M-<tab>") 'previous-buffer)
   (define-key evil-normal-state-map (kbd "s-b") 'helm-mini)
-  ;; (define-key evil-normal-state-map (kbd "C-\\") 'helm-projectile-ag)
 
-  ;; Swap evil s to evil-avy-goto-char-2
-  (define-key evil-normal-state-map (kbd "s") 'evil-avy-goto-char-2)
+  (define-key evil-normal-state-map (kbd "s") 'evil-avy-goto-char-timer)
 
   (spacemacs/set-leader-keys
     "bo" 'switch-to-buffer-other-window
-    ;; "ff" 'fzf-directory
-    ;; "pf" 'fzf-projectile
     "wn" 'dee/maximize-vertically
     )
 
   ;; enable auto-complete globally
   (global-company-mode)
 
+  (setq projectile-project-search-path '("~/repos"))
   (setq projectile-enable-caching t)
 
   ;; Open new files in an existing frame if there is one
@@ -448,8 +441,8 @@ you should place your code here."
   (setq mouse-wheel-scroll-amount '(3 ((shift) . 1) ((control) . nil)))
   (setq mouse-wheel-progressive-speed nil)
 
-  (with-eval-after-load 'evil
-    (defalias #'forward-evil-word #'forward-evil-symbol))
+  ;; Treat underscores as part of word in programming modes
+  (add-hook 'prog-mode-hook #'(lambda () (modify-syntax-entry ?_ "w")))
 
   ;; python
   ;; (setq ycmd-server-command '("python" "/Users/deepakk/.vim/bundle/YouCompleteMe/third_party/ycmd/ycmd"))
@@ -458,6 +451,16 @@ you should place your code here."
   (spacemacs/set-leader-keys-for-major-mode 'python-mode
     "hh" 'anaconda-mode-show-doc
     )
+
+  (setq evil-want-Y-yank-to-eol t)
+  (setq helm-buffer-max-length 40)
+  (setq helm-ff-auto-update-initial-value t)
+  (setq scroll-conservatively 0)
+  (setq spacemacs-large-file-modes-list
+          (quote
+           (archive-mode tar-mode jka-compr git-commit-mode image-mode doc-view-mode doc-view-mode-maybe ebrowse-tree-mode pdf-view-mode tags-table-mode)))
+   (setq synosaurus-backend (quote synosaurus-backend-wordnet))
+   (setq vc-follow-symlinks nil)
   )
 
 ;; Do not write anything past this comment. This is where Emacs will
@@ -467,19 +470,9 @@ you should place your code here."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(evil-want-Y-yank-to-eol t)
- '(git-gutter:hide-gutter t)
- '(git-gutter:lighter " ġ")
- '(helm-buffer-max-length 40)
- '(helm-ff-auto-update-initial-value t)
  '(package-selected-packages
    (quote
-    (org-jira go-guru go-eldoc company-go go-mode helm-codesearch ace-jump-buffer company-tern tern csv-mode engine-mode beacon seq git-gutter yasnippet-snippets flycheck-ycmd company-ycmd ycmd request-deferred imenu-list xkcd helm-cscope xcscope helm-gtags ggtags all-the-icons memoize sr-speedbar typit mmt sudoku pacmacs 2048-game selectric-mode python-environment ctable concurrent deferred evil-snipe mmm-mode markdown-toc markdown-mode gh-md ibuffer-projectile company-web web-completion-data company-anaconda sql-indent phpunit phpcbf php-extras php-auto-yasnippets drupal-mode php-mode less-css-mode let-alist org-mime yaml-mode eclim web-mode tagedit slim-mode scss-mode sass-mode pug-mode helm-css-scss haml-mode emmet-mode ox-reveal ox-gfm org-projectile org-category-capture org-present org-pomodoro alert log4e gntp org-download htmlize gnuplot yapfify pyvenv pytest pyenv-mode py-isort pip-requirements live-py-mode hy-mode dash-functional helm-pydoc cython-mode anaconda-mode pythonic vimrc-mode dactyl-mode xterm-color shell-pop multi-term eshell-z eshell-prompt-extras esh-help helm-company helm-c-yasnippet fuzzy company-statistics company auto-yasnippet ac-ispell auto-complete ghub flyspell-correct-helm flyspell-correct flycheck-pos-tip pos-tip flycheck auto-dictionary smeargle orgit magit-gitflow helm-gitignore gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link evil-magit magit magit-popup git-commit with-editor web-beautify livid-mode skewer-mode simple-httpd json-mode json-snatcher json-reformat js2-refactor yasnippet multiple-cursors js2-mode js-doc coffee-mode reveal-in-osx-finder pbcopy osx-trash osx-dictionary launchctl ws-butler winum which-key volatile-highlights vi-tilde-fringe uuidgen use-package toc-org spaceline powerline restart-emacs request rainbow-delimiters popwin persp-mode pcre2el paradox spinner org-plus-contrib org-bullets open-junk-file neotree move-text macrostep lorem-ipsum linum-relative link-hint info+ indent-guide hydra hungry-delete hl-todo highlight-parentheses highlight-numbers parent-mode highlight-indentation hide-comnt help-fns+ helm-themes helm-swoop helm-projectile helm-mode-manager helm-make projectile pkg-info epl helm-flx helm-descbinds helm-ag google-translate golden-ratio flx-ido flx fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state smartparens evil-indent-plus evil-iedit-state iedit evil-exchange evil-escape evil-ediff evil-args evil-anzu anzu evil goto-chg undo-tree eval-sexp-fu highlight elisp-slime-nav dumb-jump f dash s diminish define-word column-enforce-mode clean-aindent-mode bind-map bind-key auto-highlight-symbol auto-compile packed aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line helm helm-core popup async)))
- '(scroll-conservatively 0)
- '(spacemacs-large-file-modes-list
-   (quote
-    (archive-mode tar-mode jka-compr git-commit-mode image-mode doc-view-mode doc-view-mode-maybe ebrowse-tree-mode pdf-view-mode tags-table-mode)))
- '(vc-follow-symlinks nil))
+    (mmt org-category-capture alert log4e gntp markdown-mode skewer-mode simple-httpd json-snatcher json-reformat multiple-cursors js2-mode xcscope haml-mode gitignore-mode flyspell-correct pos-tip flycheck magit magit-popup git-commit with-editor web-completion-data dash-functional tern go-mode company yasnippet anaconda-mode pythonic memoize auto-complete define-word yapfify yaml-mode xterm-color xkcd ws-butler winum which-key web-mode web-beautify volatile-highlights vimrc-mode vi-tilde-fringe uuidgen use-package typit toc-org tagedit synosaurus sudoku sr-speedbar sql-indent spaceline smeargle slim-mode shell-pop scss-mode sass-mode reveal-in-osx-finder restart-emacs rainbow-delimiters pyvenv pytest pyenv-mode py-isort pug-mode popwin pip-requirements persp-mode pcre2el pbcopy paradox pacmacs ox-reveal ox-gfm osx-trash osx-dictionary orgit org-projectile org-present org-pomodoro org-mime org-jira org-download org-bullets open-junk-file neotree multi-term move-text mmm-mode markdown-toc magit-gitflow macrostep lorem-ipsum livid-mode live-py-mode linum-relative link-hint less-css-mode launchctl json-mode js2-refactor js-doc indent-guide imenu-list ibuffer-projectile hy-mode hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-themes helm-swoop helm-pydoc helm-projectile helm-mode-manager helm-make helm-gitignore helm-flx helm-descbinds helm-css-scss helm-cscope helm-company helm-codesearch helm-c-yasnippet helm-ag google-translate golden-ratio go-guru go-eldoc gnuplot gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter gh-md fuzzy flyspell-correct-helm flycheck-pos-tip flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-snipe evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu eshell-z eshell-prompt-extras esh-help engine-mode emmet-mode elisp-slime-nav dumb-jump diminish dactyl-mode cython-mode company-web company-tern company-statistics company-go company-anaconda column-enforce-mode coffee-mode clean-aindent-mode beacon auto-yasnippet auto-highlight-symbol auto-dictionary auto-compile all-the-icons aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line ac-ispell 2048-game))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
