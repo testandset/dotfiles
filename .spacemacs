@@ -377,7 +377,7 @@ you should place your code here."
 
   ;; Highlight cursor point on movement
   (beacon-mode 1)
-  (spacemacs|diminish beacon-mode nil)
+  ;; (spacemacs|diminish beacon-mode nil)
 
   ;; search engines
   (engine-mode t)
@@ -396,10 +396,12 @@ you should place your code here."
   (setq git-gutter:lighter " ġ")
   (git-gutter:linum-setup)
 
-  (spacemacs|diminish global-git-gutter-mode nil)
-  (spacemacs|diminish git-gutter-mode nil)
-  (spacemacs|diminish which-key-mode nil)
-  (spacemacs|diminish yas-minor-mode nil)
+  ;; (spacemacs|diminish global-git-gutter-mode nil)
+  ;; (spacemacs|diminish git-gutter-mode nil)
+  ;; (spacemacs|diminish which-key-mode nil)
+  ;; (spacemacs|diminish yas-minor-mode nil)
+  ;; TODO remove dinimins once this is working okay
+  (spacemacs/toggle-mode-line-minor-modes-off)
 
   ;; evil-escape universal
   (setq-default evil-escape-key-sequence "jk")
