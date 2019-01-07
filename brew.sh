@@ -26,6 +26,7 @@ brew install wget --with-iri
 brew install vim --with-override-system-vi
 brew install grep
 brew install openssh
+brew install ripgrep
 
 brew install emacs
 brew install emacs-plus
