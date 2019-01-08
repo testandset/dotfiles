@@ -492,6 +492,7 @@ configuration.
 Put your configuration code here, except for variables that should be set
 before packages are loaded."
 
+  (setq mac-command-modifier 'super)
   ;; Add handlers for git-link
   (eval-after-load 'git-link
     '(progn
@@ -545,8 +546,9 @@ before packages are loaded."
   (define-key evil-normal-state-map (kbd "C-;") 'winner-undo)
   (define-key evil-normal-state-map (kbd "C-\'") 'winner-redo)
 
-  (define-key evil-normal-state-map (kbd "H-b") 'helm-mini)
-  (define-key evil-normal-state-map (kbd "H-k") 'kill-this-buffer)
+  (define-key evil-normal-state-map (kbd "s-b") 'helm-mini)
+  (define-key evil-normal-state-map (kbd "s-k") 'kill-this-buffer)
+  (define-key evil-normal-state-map (kbd "s-w") 'delete-window)
 
   (define-key evil-normal-state-map (kbd "s") 'evil-avy-goto-char-2)
 
