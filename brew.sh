@@ -30,6 +30,7 @@ brew install ripgrep
 
 brew install emacs
 brew install emacs-plus
+brew install poppler automake #for pdf-tools
 
 brew install the_silver_searcher
 brew install jenv
