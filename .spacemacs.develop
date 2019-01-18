@@ -574,6 +574,11 @@ before packages are loaded."
 
   (define-key evil-normal-state-map (kbd "s") 'evil-avy-goto-char-2)
 
+  (define-key evil-normal-state-map (kbd "0") 'evil-next-line-1-first-non-blank)
+  (define-key evil-normal-state-map (kbd "_") 'evil-digit-argument-or-evil-beginning-of-line)
+  (define-key evil-normal-state-map (kbd "C-x c") 'aya-create)
+  (define-key evil-normal-state-map (kbd "C-x e") 'spacemacs/auto-yasnippet-expand)
+
   (spacemacs/set-leader-keys
     "bo" 'switch-to-buffer-other-window
     )
@@ -583,6 +588,10 @@ before packages are loaded."
 
   (setq projectile-project-search-path '("~/repos"))
   (setq projectile-enable-caching t)
+
+  (setq yas-snippet-dirs
+        '("~/.emacs.d/private/snippets"                 ;; personal snippets
+          ))
 
   ;; Open new files in an existing frame if there is one
   (setq ns-pop-up-frames nil)
@@ -604,6 +613,7 @@ before packages are loaded."
    ;; java set-up
    (with-eval-after-load 'lsp-ui
      (setq lsp-ui-sideline-show-code-actions nil)
+     (setq lsp-ui-sideline-show-symbol nil)
      (lsp-ui-sideline-toggle-symbols-info)
      (setq lsp-ui-doc-enable nil)
      (setq lsp-java-format-settings-url "~/Documents/spotify-checkstyle-idea.xml")
@@ -626,7 +636,7 @@ This function is called at the very end of Spacemacs initialization."
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (lsp-ui lsp-java lsp-go dap-mode bui tree-mode company-lsp lsp-mode ht yasnippet-snippets yapfify yaml-mode xterm-color xkcd ws-butler writeroom-mode winum which-key web-mode web-beautify volatile-highlights vimrc-mode vi-tilde-fringe uuidgen use-package typit toc-org tagedit synosaurus symon sudoku string-inflection sr-speedbar sql-indent spaceline-all-the-icons smeargle slim-mode shell-pop scss-mode sass-mode reveal-in-osx-finder restart-emacs rainbow-delimiters pyvenv pytest pyenv-mode py-isort pug-mode prettier-js popwin pippel pipenv pip-requirements persp-mode persistent-scratch pcre2el password-generator paradox pacmacs ox-reveal ox-gfm overseer osx-trash osx-dictionary orgit org-projectile org-present org-pomodoro org-mime org-jira org-download org-bullets org-brain open-junk-file neotree nameless mvn multi-term move-text mmm-mode meghanada maven-test-mode markdown-toc magit-svn magit-gitflow macrostep lorem-ipsum livid-mode live-py-mode link-hint launchctl json-navigator json-mode js2-refactor js-doc indent-guide importmagic impatient-mode ibuffer-projectile hungry-delete hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-xref helm-themes helm-swoop helm-pydoc helm-purpose helm-projectile helm-org-rifle helm-mode-manager helm-make helm-gitignore helm-git-grep helm-flx helm-descbinds helm-css-scss helm-cscope helm-company helm-codesearch helm-c-yasnippet helm-ag groovy-mode groovy-imports gradle-mode google-translate golden-ratio godoctor go-tag go-rename go-impl go-guru go-gen-test go-fill-struct go-eldoc gnuplot gitignore-templates gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter gh-md fuzzy font-lock+ flyspell-correct-helm flycheck-pos-tip flx-ido fill-column-indicator fancy-battery eyebrowse expand-region evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-org evil-numbers evil-nerd-commenter evil-matchit evil-magit evil-lisp-state evil-lion evil-indent-plus evil-iedit-state evil-goggles evil-exchange evil-escape evil-ediff evil-cleverparens evil-args evil-anzu eval-sexp-fu eshell-z eshell-prompt-extras esh-help ensime engine-mode emmet-mode elisp-slime-nav editorconfig dumb-jump dotenv-mode doom-modeline diminish dactyl-mode cython-mode counsel-projectile company-web company-tern company-statistics company-go company-emacs-eclim company-anaconda column-enforce-mode clean-aindent-mode centered-cursor-mode beacon auto-yasnippet auto-highlight-symbol auto-dictionary auto-compile aggressive-indent ace-window ace-link ace-jump-helm-line ac-ispell 2048-game))))
+    (yasnippet-snippets writeroom-mode visual-fill-column symon string-inflection spaceline-all-the-icons prettier-js pippel pipenv password-generator overseer org-brain nameless mvn meghanada maven-test-mode magit-svn lsp-ui lsp-java json-navigator hierarchy importmagic epc ctable concurrent deferred impatient-mode helm-xref helm-purpose window-purpose helm-org-rifle helm-git-grep groovy-mode groovy-imports pcache gradle-mode godoctor go-tag go-rename go-impl go-gen-test go-fill-struct gitignore-templates evil-org evil-lion evil-goggles evil-cleverparens paredit ensime sbt-mode scala-mode editorconfig doom-modeline eldoc-eval shrink-path dap-mode bui tree-mode counsel-projectile counsel swiper ivy company-lsp lsp-mode ht centered-cursor-mode font-lock+ dotenv-mode yapfify yaml-mode xterm-color xkcd ws-butler winum which-key web-mode web-beautify volatile-highlights vimrc-mode vi-tilde-fringe uuidgen use-package typit mmt toc-org tagedit synosaurus sudoku sr-speedbar sql-indent spaceline powerline smeargle slim-mode shell-pop scss-mode sass-mode reveal-in-osx-finder restart-emacs rainbow-delimiters pyvenv pytest pyenv-mode py-isort pug-mode popwin pip-requirements persp-mode persistent-scratch pcre2el pbcopy paradox spinner pacmacs ox-reveal ox-gfm osx-trash osx-dictionary orgit org-projectile org-category-capture org-present org-pomodoro alert log4e gntp org-plus-contrib org-mime org-jira org-download org-bullets open-junk-file neotree multi-term move-text mmm-mode markdown-toc markdown-mode magit-gitflow macrostep lorem-ipsum livid-mode skewer-mode simple-httpd live-py-mode linum-relative link-hint launchctl json-mode json-snatcher json-reformat js2-refactor multiple-cursors js2-mode js-doc indent-guide imenu-list ibuffer-projectile hydra hy-mode hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers parent-mode highlight-indentation helm-themes helm-swoop helm-pydoc helm-projectile helm-mode-manager helm-make projectile helm-gitignore request helm-flx helm-descbinds helm-css-scss helm-cscope xcscope helm-company helm-codesearch helm-c-yasnippet helm-ag haml-mode google-translate golden-ratio go-guru go-eldoc gnuplot gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter gh-md fuzzy flyspell-correct-helm flyspell-correct flycheck-pos-tip pos-tip flycheck pkg-info epl flx-ido flx fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist highlight evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit magit magit-popup git-commit with-editor evil-lisp-state smartparens evil-indent-plus evil-iedit-state iedit evil-exchange evil-escape evil-ediff evil-args evil-anzu anzu evil goto-chg undo-tree eval-sexp-fu eshell-z eshell-prompt-extras esh-help engine-mode emmet-mode elisp-slime-nav dumb-jump diminish dactyl-mode cython-mode company-web web-completion-data company-tern dash-functional tern company-statistics company-go go-mode company-emacs-eclim eclim company-anaconda company column-enforce-mode coffee-mode clean-aindent-mode bind-map bind-key beacon auto-yasnippet yasnippet auto-highlight-symbol auto-dictionary auto-compile packed anaconda-mode pythonic f dash s all-the-icons memoize aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line helm avy helm-core async ac-ispell auto-complete popup 2048-game))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
