@@ -98,6 +98,10 @@ export SSH_KEY_PATH="~/.ssh/rsa_id"
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 alias c=clear
+alias vim="emacsclient -nw -s ~/.emacs.d/server/server"
+alias e="emacsclient -nw -s ~/.emacs.d/server/server"
+alias vi="emacsclient -nw -s ~/.emacs.d/server/server"
+
 
 # pyenv set-up
 export PYENV_ROOT="$HOME/.pyenv"
@@ -107,4 +111,7 @@ if command -v pyenv 1>/dev/null 2>&1; then
     eval "$(pyenv init -)"
 fi
 
+#export EDITOR="emacsclient -nw -s ~/.emacs.d/server/server"
+export EA_EDITOR="emacsclient -cn -s ~/.emacs.d/server/server"
 
+#export PATH="/Applications/Emacs.app/Contents/MacOS/Emacs:$PATH"
