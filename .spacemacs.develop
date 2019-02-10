@@ -33,7 +33,7 @@ This function should only modify configuration layer settings."
 
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
-   '(
+   '(csv
      javascript
      (java :variables java-backend 'lsp)
      go
@@ -77,7 +77,7 @@ This function should only modify configuration layer settings."
      osx
      (ibuffer :variables
               ibuffer-group-buffers-by 'projects)
-     ;; restclient
+     restclient
      ;; fun ones
      xkcd
      games)
@@ -92,6 +92,7 @@ This function should only modify configuration layer settings."
    dotspacemacs-additional-packages '(
                                       all-the-icons
                                       beacon ;; Highlight the curson when it moves
+                                      dired-subtree
                                       engine-mode
                                       git-gutter ;; show markers on the left margin for changed/added/deleted lines
                                       helm-codesearch
@@ -100,6 +101,8 @@ This function should only modify configuration layer settings."
                                       persistent-scratch
                                       sr-speedbar
                                       synosaurus ;;thesaurus
+                                      wucuo ;; camelcase spell-check
+                                      magit-todos
                                       )
 
    ;; A list of packages that cannot be updated.
@@ -410,14 +413,14 @@ It should only modify the values of Spacemacs settings."
 
    ;; If non-nil, start an Emacs server if one is not already running.
    ;; (default nil)
-   dotspacemacs-enable-server nil
+   dotspacemacs-enable-server t
 
    ;; Set the emacs server socket location.
    ;; If nil, uses whatever the Emacs default is, otherwise a directory path
    ;; like \"~/.emacs.d/server\". It has no effect if
    ;; `dotspacemacs-enable-server' is nil.
    ;; (default nil)
-   dotspacemacs-server-socket-dir nil
+   dotspacemacs-server-socket-dir "~/.emacs.d/server"
 
    ;; If non-nil, advise quit functions to keep server open when quitting.
    ;; (default nil)
@@ -498,6 +501,7 @@ Put your configuration code here, except for variables that should be set
 before packages are loaded."
 
   (setq mac-command-modifier 'super)
+  (setq delete-by-moving-to-trash t)
   ;; Add handlers for git-link
   (eval-after-load 'git-link
     '(progn
@@ -524,6 +528,9 @@ before packages are loaded."
     "http://www.google.com/search?ie=utf-8&oe=utf-8&q=%s"
     :keybinding "g"
     )
+
+  ;; spell check camelcase
+  ;; (wucuo-start)
 
   (with-eval-after-load 'org
     ;; Replace org ... with fancy
@@ -635,7 +642,24 @@ before packages are loaded."
 
      (magit-define-popup-option 'magit-log-popup
        ?u "Until date" "--until=" #'magit-org-read-date)
+
+     ;; enable spell check for commit
+     (add-hook 'git-commit-setup-hook 'git-commit-turn-on-flyspell)
      )
+
+   ;; dired
+   (with-eval-after-load 'dired
+     (bind-keys :map dired-mode-map
+               ("i" . dired-subtree-toggle)
+               ("/" . helm-swoop)))
+
+   ;; reuse dired buffers
+   (add-hook 'dired-mode-hook
+             (lambda ()
+               (define-key dired-mode-map (kbd "^")
+                 (lambda () (interactive) (find-alternate-file "..")))
+                                        ; was dired-up-directory
+               ))
 
    (pdf-tools-install)
   )
@@ -654,7 +678,7 @@ This function is called at the very end of Spacemacs initialization."
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (yasnippet-snippets pdf-tools lsp-ui lsp-java editorconfig doom-modeline dap-mode lsp-mode magit yapfify yaml-mode xterm-color xkcd ws-butler writeroom-mode winum which-key web-mode web-beautify volatile-highlights vimrc-mode vi-tilde-fringe uuidgen use-package typit tree-mode toc-org tagedit tablist synosaurus symon sudoku string-inflection sr-speedbar sql-indent spaceline-all-the-icons smeargle slim-mode shrink-path shell-pop scss-mode sass-mode reveal-in-osx-finder restart-emacs rainbow-delimiters pyvenv pytest pyenv-mode py-isort pug-mode prettier-js popwin pippel pipenv pip-requirements persp-mode persistent-scratch pcre2el password-generator paradox pacmacs ox-reveal ox-gfm overseer osx-trash osx-dictionary orgit org-projectile org-present org-pomodoro org-mime org-jira org-download org-bullets org-brain open-junk-file neotree nameless mvn multi-term move-text mmm-mode meghanada maven-test-mode markdown-toc magit-svn magit-gitflow macrostep lorem-ipsum livid-mode live-py-mode link-hint launchctl json-navigator json-mode js2-refactor js-doc indent-guide importmagic impatient-mode ibuffer-projectile hungry-delete ht hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-xref helm-themes helm-swoop helm-pydoc helm-purpose helm-projectile helm-org-rifle helm-mode-manager helm-make helm-gitignore helm-git-grep helm-flx helm-descbinds helm-css-scss helm-cscope helm-company helm-codesearch helm-c-yasnippet helm-ag groovy-mode groovy-imports gradle-mode google-translate golden-ratio godoctor go-tag go-rename go-impl go-guru go-gen-test go-fill-struct go-eldoc gnuplot gitignore-templates gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter git-commit gh-md fuzzy font-lock+ flyspell-correct-helm flycheck-pos-tip flx-ido fill-column-indicator fancy-battery eyebrowse expand-region evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-org evil-numbers evil-nerd-commenter evil-matchit evil-magit evil-lisp-state evil-lion evil-indent-plus evil-iedit-state evil-goggles evil-exchange evil-escape evil-ediff evil-cleverparens evil-args evil-anzu eval-sexp-fu eshell-z eshell-prompt-extras esh-help ensime engine-mode emmet-mode elisp-slime-nav eldoc-eval dumb-jump dotenv-mode diminish dactyl-mode cython-mode counsel-projectile company-web company-tern company-statistics company-lsp company-go company-emacs-eclim company-anaconda column-enforce-mode clean-aindent-mode centered-cursor-mode bui beacon auto-yasnippet auto-highlight-symbol auto-dictionary auto-compile aggressive-indent ace-window ace-link ace-jump-helm-line ac-ispell 2048-game))))
+    (magit-todos yapfify yaml-mode xterm-color xkcd wucuo ws-butler winum which-key web-mode web-beautify volatile-highlights vimrc-mode vi-tilde-fringe uuidgen use-package typit mmt toc-org tagedit synosaurus sudoku sr-speedbar sql-indent spaceline powerline smeargle slim-mode shell-pop scss-mode sass-mode reveal-in-osx-finder restclient-helm restart-emacs rainbow-delimiters pyvenv pytest pyenv-mode py-isort pug-mode popwin pip-requirements persp-mode persistent-scratch pdf-tools tablist pcre2el pbcopy paradox spinner pacmacs ox-reveal ox-gfm osx-trash osx-dictionary orgit org-projectile org-category-capture org-present org-pomodoro alert log4e gntp org-plus-contrib org-mime org-jira org-download org-bullets open-junk-file ob-restclient ob-http neotree multi-term move-text mmm-mode markdown-toc markdown-mode magit-gitflow macrostep lorem-ipsum livid-mode skewer-mode simple-httpd live-py-mode linum-relative link-hint launchctl json-mode json-snatcher json-reformat js2-refactor multiple-cursors js2-mode js-doc indent-guide imenu-list ibuffer-projectile hydra hy-mode hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers parent-mode highlight-indentation helm-themes helm-swoop helm-pydoc helm-projectile helm-mode-manager helm-make projectile helm-gitignore request helm-flx helm-descbinds helm-css-scss helm-cscope xcscope helm-company helm-codesearch helm-c-yasnippet helm-ag haml-mode google-translate golden-ratio go-guru go-eldoc gnuplot gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter gh-md fuzzy flyspell-correct-helm flyspell-correct flycheck-pos-tip pos-tip flycheck pkg-info epl flx-ido flx fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist highlight evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit magit magit-popup git-commit with-editor evil-lisp-state smartparens evil-indent-plus evil-iedit-state iedit evil-exchange evil-escape evil-ediff evil-args evil-anzu anzu evil goto-chg undo-tree eval-sexp-fu eshell-z eshell-prompt-extras esh-help engine-mode emmet-mode elisp-slime-nav dumb-jump dired-subtree dired-hacks-utils diminish dactyl-mode cython-mode csv-mode company-web web-completion-data company-tern dash-functional tern company-statistics company-restclient restclient know-your-http-well company-go go-mode company-emacs-eclim eclim company-anaconda company column-enforce-mode coffee-mode clean-aindent-mode bind-map bind-key beacon auto-yasnippet yasnippet auto-highlight-symbol auto-dictionary auto-compile packed anaconda-mode pythonic f dash s all-the-icons memoize aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line helm avy helm-core async ac-ispell auto-complete popup 2048-game))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
