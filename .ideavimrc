@@ -192,6 +192,7 @@ nmap <C-i> :action Forward<cr>
 nmap <leader>ee :action Tool_Editors_Emacs<cr>
 nmap = :action ReformatCode<cr>
 nmap <leader>zr :action EditorResetFontSize<cr>
+vmap <leader>em :action ExtractMethod<cr>
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Helper functions
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
