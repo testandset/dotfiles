@@ -47,8 +47,15 @@ brew install tree
 brew install ctags
 brew install cscope
 
+brew install fzf
+$(brew --prefix)/opt/fzf/install
+
 # spell check
 brew install ispell --with-lang-en
+
+# https://github.com/koekeishiya/skhd
+brew install koekeishiya/formulae/skhd
+brew install koekeishiya/formulae/chunkwm
 
 # Remove outdated versions from the cellar.
 brew cleanup
