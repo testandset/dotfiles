@@ -98,9 +98,9 @@ export SSH_KEY_PATH="~/.ssh/rsa_id"
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 alias c=clear
-alias vim="emacsclient -nw -s ~/.emacs.d/server/server"
+# alias vim="emacsclient -nw -s ~/.emacs.d/server/server"
 alias e="emacsclient -nw -s ~/.emacs.d/server/server"
-alias vi="emacsclient -nw -s ~/.emacs.d/server/server"
+# alias vi="emacsclient -nw -s ~/.emacs.d/server/server"
 
 
 # pyenv set-up
@@ -111,9 +111,14 @@ if command -v pyenv 1>/dev/null 2>&1; then
     eval "$(pyenv init -)"
 fi
 
-export EDITOR="emacsclient -nw -s ~/.emacs.d/server/server"
+export EDITOR="vim"
+export VISUAL="vim"
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+# fzf autocompletion
+export FZF_COMPLETION_TRIGGER=''
+bindkey '^T' fzf-completion
+bindkey '^I' $fzf_default_completion
 
 #save previous command to snippets.org
 function prev() {
@@ -133,3 +138,9 @@ fzf-snippet() {
 }
 zle     -N   fzf-snippet
 bindkey '^s' fzf-snippet
+
+# Enable Ctrl-x-e to edit command line
+autoload -U edit-command-line
+zle -N edit-command-line
+bindkey '^xe' edit-command-line
+bindkey '^x^e' edit-command-line
