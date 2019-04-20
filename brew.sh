@@ -57,5 +57,9 @@ brew install ispell --with-lang-en
 brew install koekeishiya/formulae/skhd
 brew install koekeishiya/formulae/chunkwm
 
+brew install tmux
+
+# security/firewall
+brew cask install lulu
 # Remove outdated versions from the cellar.
 brew cleanup
