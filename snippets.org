@@ -29,6 +29,11 @@ lsof -i -P -n | grep LISTEN  # use sudo; list ports which are busy or listening
 rsync -avz -e "ssh -p <PORT-NUMBER>" --progress /path/to/source username@hostname:/path/to/dest   # rsync over ssh, copy from local to remote
 rsync -avz -e "ssh -p <PORT-NUMBER>" --progress username@hostname:/path/to/source /path/to/dest   # rsync over ssh, copy from remote to local
 pandoc -s -r html <url> -o file.org #save webpage as org file
+sudo nmap -sn 192.168.10.0/24 # scan network for devices
+sudo !! # run previous command as sudo
+fc # fix previous command in an editor
+ssh -L 3337:<remote-host>:<remote-port> root@domain -N # connection locahost 3337 port to remote ip/port
+tee -a <file> # Intercept stout to a file
 ** Tmux
 tmux new -s myname  # start new with session name
 tmux a -t myname  # attach to named session
@@ -46,20 +51,25 @@ services.gew1.spotify.net # to one region
 services.spotify.net # to any regions
 services.shared.cloud.spotify.net # to shared
 *** Userdata
-echo '{\"usernames\": [\"'<username>'\"]}' | jhurl -s services.gew1.spotify.net hm://userdata/ids -p | jq . # userid from username
-echo '{\"user_ids\": [\"'<userid>'\"]}' | jhurl -s services.gew1.spotify.net hm://userdata/ids -p | jq . # username from userid
-jhurl -s services.gew1.spotify.net hm://identity/v1/user/%7Bm1ck3y%7D | jq . # user identity
-jhurl -s services.gew1.spotify.net hm://userdata/account?user_id=1417e509674f48d9a77ffea4ff5d1816 -p | jq . # userdata by username
-hurl -s services.gew1.spotify.net hm://userdata/account?user_id=1417e509674f48d9a77ffea4ff5d1816 | jq . #userdata by user_id
+echo '{"usernames": ["username"]}' | jhurl -s services.gew1.spotify.net hm://userdata/ids -p | jq # userid from username
+echo '{"user_ids": ["userid"]}' | jhurl -s services.gew1.spotify.net hm://userdata/ids -p | jq # username from userid
+jhurl -s services.gew1.spotify.net hm://identity/v1/user/%7Bm1ck3y%7D | jq # user identity
+jhurl -s services.gew1.spotify.net hm://userdata/account?user_id=1417e509674f48d9a77ffea4ff5d1816 -p | jq # userdata by username
+hurl -s services.gew1.spotify.net hm://userdata/account?user_id=1417e509674f48d9a77ffea4ff5d1816 | jq #userdata by user_id
 *** Family
-echo "{\"planType\":\"DUO\"}" | jhurl -s services.gew1 -X "POST" "hm://family/v1/internal/family/home" --userid=de88319ce6b44089b811a940cdf10db0 -p | jq . #create a family master
-echo "{\"address\":\"20 rue Beranger, 75003 Paris\",\"placeId\":\"ChIJ9wd7mAhu5kcRwz5BP-XfZts\"}" | jhurl -s services.gew1 -X "POST" "hm://family/v1/family/home/onboard" --userid=de88319ce6b44089b811a940cdf10db0 -p | jq . # onboard master
-echo "{\"inviteToken\":\"c7y0348bZb7\",\"address\":\"20 rue Beranger, 75003 Paris\"}" | jhurl -s services.gew1 -X "POST" "hm://family/v1/family/member" --userid=85d8fcc00bd34d73acab19175a7139d9 -p | jq . # add member
+curl -H "Content-Type: application/json" -H "_ui:$(printf "%b" '\x01')r USER_ID" -s http://host.spotify.net/v1/family/home # curl for hermes
+echo "{"planType":"DUO"}" | jhurl -s services.gew1 -X "POST" "hm://family/v1/internal/family/home" --userid=de88319ce6b44089b811a940cdf10db0 -p | jq #create a family master
+echo "{"address":"20 rue Beranger, 75003 Paris","placeId":"ChIJ9wd7mAhu5kcRwz5BP-XfZts"}" | jhurl -s services.gew1 -X "POST" "hm://family/v1/family/home/onboard" --userid=de88319ce6b44089b811a940cdf10db0 -p | jq # onboard master
+echo "{"inviteToken":"c7y0348bZb7","address":"20 rue Beranger, 75003 Paris"}" | jhurl -s services.gew1 -X "POST" "hm://family/v1/family/member" --userid=85d8fcc00bd34d73acab19175a7139d9 -p | jq # add member
 echo '{"memberId":"3746654e-693b-412e-832c-da61de8c201b"}' | jhurl -s services.shared.cloud.spotify.net -X DELETE hm://family/v1/family/member/3746654e-693b-412e-832c-da61de8c201b --userid a3204151f86243449813313b5bfdb841clea # delete a plan
 jhurl -s services.gew1 -X "DELETE" "hm://family/v1/internal/family/home" --userid=d0d1470adb754bf18f7af9ee52a49f36 # delete home
 jhurl -s services.shared.cloud.spotify.net hm://family/v1/family/home --userid a3204151f86243449813313b5bfdb841 -p | jq # get home for user
-jhurl -z tcp://guc3-family-c-w5pt.guc3.spotify.net:26454 'hm://family/meta/health' # family health
-jhurl -z tcp://guc3-family-c-w5pt.guc3.spotify.net:26454 'hm://family/v1/playlists' --userid ee257b28c0764c80b82689bff3c4e89c # get user playlists
+jhurl -s services.shared.cloud.spotify.net 'hm://family/meta/health' # family health
+jhurl -s services.shared.cloud.spotify.net 'hm://family/v1/playlists' --userid ee257b28c0764c80b82689bff3c4e89c # get user playlists
+echo '{"shareWithMemberId":"40ef4772-8db6-4b2e-b2c9-4dac28ee122d"}' |jhurl -X POST -s services.gew1 'hm://family/v1/family/playlists' --userid 3ab18d1e222c43c78c8bd6caf6919a71 # share playlists
+echo '{"sharerId":"8c762654-742f-4eed-9ccf-657c7a1b692b"}' | jhurl -X POST -s services.gew1 'hm://family/v1/family/playlists/reject' --userid f7ba2d5db25b4289b9ff984c4e4226f0 # reject playlists
+echo '{"sharerId":"8c762654-742f-4eed-9ccf-657c7a1b692b", "folderName":"Duo;)"}' |jhurl -X POST -s services.gew1 'hm://family/v1/family/playlists/accept' --userid f7ba2d5db25b4289b9ff984c4e4226f0 # accept playlist
+
 ** IMOC
 ldapsearch -H ldap://gew1-ds-d-4cgl.gew1.spotify.net -D 'uid=deepak,ou=people,ou=spotify,dc=spotify,dc=net' -W -b ou=people,ou=spotify,dc=spotify,dc=net 'uid=deepak' # ldap search
 
