@@ -502,9 +502,9 @@ configuration.
 Put your configuration code here, except for variables that should be set
 before packages are loaded."
   ;; use chrome incognito
-  (setq browse-url-browser-function (quote browse-url-generic))
+  (setq browse-url-browser-function 'browse-url-default-macosx-browser)
   (setq browse-url-generic-args (quote ("--incognito")))
-  (setq browse-url-generic-program "chromium-browser")
+
 
   (setq mac-command-modifier 'super)
   (setq delete-by-moving-to-trash t)
@@ -541,14 +541,14 @@ before packages are loaded."
   (with-eval-after-load 'org
     ;; Replace org ... with fancy
     (setq org-ellipsis " ▼")
-    (setq org-directory "~/org")
+    (setq org-directory "~/Documents/Drive/org")
     (setq org-agenda-files (list org-directory))
 
     (setq org-capture-templates
-          '(("t" "Todo" entry (file+headline "~/org/tasks.org" "Tasks")
+          '(("t" "Todo" entry (file+headline "~/Documents/Drive/org/tasks.org" "Tasks")
              "* TODO %?\n  %U\n  %i\n  %a")
             ("s" "Code Snippet" entry
-             (file "~/org/snippets.org")
+             (file "~/Documents/Drive/org/snippets.org")
              ;; Prompt for tag and language
              "* %?\t%^g\n#+BEGIN_SRC %^{language}\n\n#+END_SRC")
             ))
@@ -611,7 +611,7 @@ before packages are loaded."
   ;; enable auto-complete globally
   (global-company-mode)
 
-  (setq projectile-project-search-path '("~/repos"))
+  (setq projectile-project-search-path '("~/repos/"))
   (setq projectile-enable-caching t)
 
   (setq yas-snippet-dirs
@@ -685,7 +685,8 @@ before packages are loaded."
                ))
 
    (pdf-tools-install)
-  )
+
+   )
 
 ;; Do not write anything past this comment. This is where Emacs will
 ;; auto-generate custom variable definitions.
