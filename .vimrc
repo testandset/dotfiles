@@ -32,13 +32,9 @@ call vundle#begin()
 Plugin 'gmarik/Vundle.vim'
 
 " Add all your plugins here (note older versions of Vundle used Bundle instead of Plugin)
-Plugin 'python-mode/python-mode'
 Plugin 'scrooloose/nerdtree'
 Plugin 'kien/ctrlp.vim'
-Plugin 'tpope/vim-git'
-Plugin 'tpope/vim-fugitive'
 Plugin 'powerline/powerline', {'rtp': 'powerline/bindings/vim/'}
-Plugin 'vim-scripts/ZoomWin'
 Plugin 'sickill/vim-pasta'
 Plugin 'jistr/vim-nerdtree-tabs'
 Plugin 'airblade/vim-gitgutter'
@@ -47,7 +43,6 @@ Plugin 'tpope/vim-surround'
 Plugin 'ntpeters/vim-better-whitespace'
 Plugin 'scrooloose/nerdcommenter'
 Plugin 'easyotion/vim-easymotion'
-Plugin 'Valloric/YouCompleteMe'
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
