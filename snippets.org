@@ -34,6 +34,9 @@ sudo !! # run previous command as sudo
 fc # fix previous command in an editor
 ssh -L 3337:<remote-host>:<remote-port> root@domain -N # connection locahost 3337 port to remote ip/port
 tee -a <file> # Intercept stout to a file
+for i in $(cat tmp.tmp); do jhurl -s services.gew1.spotify.net --method GET "hm://userdata/account?user_id=$i"; done #quick loop through
+top -H -p <pid> #See threads from a process
+ps -T -P <pid> #All threads from a process
 ** Tmux
 tmux new -s myname  # start new with session name
 tmux a -t myname  # attach to named session
@@ -51,11 +54,10 @@ services.gew1.spotify.net # to one region
 services.spotify.net # to any regions
 services.shared.cloud.spotify.net # to shared
 *** Userdata
-echo '{"usernames": ["username"]}' | jhurl -s services.gew1.spotify.net hm://userdata/ids -p | jq # userid from username
-echo '{"user_ids": ["userid"]}' | jhurl -s services.gew1.spotify.net hm://userdata/ids -p | jq # username from userid
+pbpaste | xargs -I {} echo '{"usernames": ["{}"]}' | jhurl -s services.gew1.spotify.net hm://userdata/ids -p | jq '.[].user_id' | tr -d '"' | pbcopy # userid from username
+pbpaste | xargs -I {} echo '{"user_ids": ["{}"]}' | jhurl -s services.gew1.spotify.net hm://userdata/ids -p | jq '.[].username' | tr -d '"' | pbcopy # username from userid
 jhurl -s services.gew1.spotify.net hm://identity/v1/user/%7Bm1ck3y%7D | jq # user identity
-jhurl -s services.gew1.spotify.net hm://userdata/account?user_id=1417e509674f48d9a77ffea4ff5d1816 -p | jq # userdata by username
-hurl -s services.gew1.spotify.net hm://userdata/account?user_id=1417e509674f48d9a77ffea4ff5d1816 | jq #userdata by user_id
+jhurl -s services.gew1.spotify.net hm://userdata/account?user_id=1417e509674f48d9a77ffea4ff5d1816 -p | jq # userdata by user_id
 *** Family
 curl -H "Content-Type: application/json" -H "_ui:$(printf "%b" '\x01')r USER_ID" -s http://host.spotify.net/v1/family/home # curl for hermes
 echo "{"planType":"DUO"}" | jhurl -s services.gew1 -X "POST" "hm://family/v1/internal/family/home" --userid=de88319ce6b44089b811a940cdf10db0 -p | jq #create a family master
@@ -75,3 +77,8 @@ ldapsearch -H ldap://gew1-ds-d-4cgl.gew1.spotify.net -D 'uid=deepak,ou=people,ou
 
 ** Payments
 curl -X POST http://localhost:5050/v4/family/provision_subaccount_premium # payments http-api port 5050
+
+** Misc
+ssh-add ~/.ssh/id_rsa #Add ssh keys
+disco role parentalcontrol --spoticloud # service discovery on shared
+dig -t srv _spotify-parental-control._http.services.shared.cloud.spotify.net #service discovery
