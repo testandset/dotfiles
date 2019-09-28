@@ -105,6 +105,7 @@ This function should only modify configuration layer settings."
                                       wucuo ;; camelcase spell-check
                                       magit-todos
                                       browse-at-remote
+                                      ;; frog-jump-buffer
                                       )
 
    ;; A list of packages that cannot be updated.
@@ -529,6 +530,7 @@ before packages are loaded."
 
   ;; search engines
   (engine-mode t)
+  ;; (setq engine/browser-function 'eww-browse-url)
   (engine/set-keymap-prefix (kbd "s-/"))
   (defengine google
     "http://www.google.com/search?ie=utf-8&oe=utf-8&q=%s"
@@ -569,11 +571,28 @@ before packages are loaded."
             ("v" . "verse"))))
     )
 
-  (setq magit-repository-directories '("~/repos"))
+  (setq magit-repository-directories '(("~/repos" . 2)))
   (setq global-git-gutter-mode t)
   (setq git-gutter:hide-gutter t)
   (setq git-gutter:lighter " ġ")
   (git-gutter:linum-setup)
+  (with-eval-after-load 'magit
+    (defun dee/visit-pull-request-url ()
+      "Visit the current branch's PR on Github."
+      (interactive)
+      (browse-url
+       (format "https://ghe.spotify.net/%s/pull/new/%s"
+               (replace-regexp-in-string
+                "\\`.+github\\.com:\\(.+\\)\\.git\\'" "\\1"
+                (magit-get "remote"
+                           (magit-get-push-remote)
+                           "url"))
+               (magit-get-current-branch))))
+
+    (eval-after-load 'magit
+      '(define-key magit-mode-map "v"
+         #'dee/visit-pull-request-url)))
+
 
   (spacemacs/toggle-mode-line-minor-modes-off)
   (setq kill-do-not-save-duplicates t)
@@ -610,6 +629,17 @@ before packages are loaded."
 
   ;; enable auto-complete globally
   (global-company-mode)
+
+  ;; enable dumb-jump
+  (dumb-jump-mode)
+  (with-eval-after-load 'dumb-jump
+    (define-key evil-normal-state-map (kbd "M-g o") 'dumb-jump-go-other-window)
+    (define-key evil-normal-state-map (kbd "C-]") 'dumb-jump-go)
+    (define-key evil-normal-state-map (kbd "M-g j") 'dumb-jump-go)
+    (define-key evil-normal-state-map (kbd "M-g i") 'dumb-jump-go-prompt)
+    (define-key evil-normal-state-map (kbd "M-g x") 'dumb-jump-go-prefer-external)
+    )
+
 
   (setq projectile-project-search-path '("~/repos/"))
   (setq projectile-enable-caching t)
@@ -703,7 +733,7 @@ This function is called at the very end of Spacemacs initialization."
  '(evil-want-Y-yank-to-eol t)
  '(package-selected-packages
    (quote
-    (toml-mode racer helm-gtags ggtags flycheck-rust counsel-gtags cargo rust-mode browse-at-remote org-wunderlist request-deferred magit-todos yapfify yaml-mode xterm-color xkcd wucuo ws-butler winum which-key web-mode web-beautify volatile-highlights vimrc-mode vi-tilde-fringe uuidgen use-package typit mmt toc-org tagedit synosaurus sudoku sr-speedbar sql-indent spaceline powerline smeargle slim-mode shell-pop scss-mode sass-mode reveal-in-osx-finder restclient-helm restart-emacs rainbow-delimiters pyvenv pytest pyenv-mode py-isort pug-mode popwin pip-requirements persp-mode persistent-scratch pdf-tools tablist pcre2el pbcopy paradox spinner pacmacs ox-reveal ox-gfm osx-trash osx-dictionary orgit org-projectile org-category-capture org-present org-pomodoro alert log4e gntp org-plus-contrib org-mime org-jira org-download org-bullets open-junk-file ob-restclient ob-http neotree multi-term move-text mmm-mode markdown-toc markdown-mode magit-gitflow macrostep lorem-ipsum livid-mode skewer-mode simple-httpd live-py-mode linum-relative link-hint launchctl json-mode json-snatcher json-reformat js2-refactor multiple-cursors js2-mode js-doc indent-guide imenu-list ibuffer-projectile hydra hy-mode hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers parent-mode highlight-indentation helm-themes helm-swoop helm-pydoc helm-projectile helm-mode-manager helm-make projectile helm-gitignore request helm-flx helm-descbinds helm-css-scss helm-cscope xcscope helm-company helm-codesearch helm-c-yasnippet helm-ag haml-mode google-translate golden-ratio go-guru go-eldoc gnuplot gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter gh-md fuzzy flyspell-correct-helm flyspell-correct flycheck-pos-tip pos-tip flycheck pkg-info epl flx-ido flx fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist highlight evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit magit magit-popup git-commit with-editor evil-lisp-state smartparens evil-indent-plus evil-iedit-state iedit evil-exchange evil-escape evil-ediff evil-args evil-anzu anzu evil goto-chg undo-tree eval-sexp-fu eshell-z eshell-prompt-extras esh-help engine-mode emmet-mode elisp-slime-nav dumb-jump dired-subtree dired-hacks-utils diminish dactyl-mode cython-mode csv-mode company-web web-completion-data company-tern dash-functional tern company-statistics company-restclient restclient know-your-http-well company-go go-mode company-emacs-eclim eclim company-anaconda company column-enforce-mode coffee-mode clean-aindent-mode bind-map bind-key beacon auto-yasnippet yasnippet auto-highlight-symbol auto-dictionary auto-compile packed anaconda-mode pythonic f dash s all-the-icons memoize aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line helm avy helm-core async ac-ispell auto-complete popup 2048-game))))
+    (lsp-python-ms python frog-jump-buffer frog-menu posframe toml-mode racer helm-gtags ggtags flycheck-rust counsel-gtags cargo rust-mode browse-at-remote org-wunderlist request-deferred magit-todos yapfify yaml-mode xterm-color xkcd wucuo ws-butler winum which-key web-mode web-beautify volatile-highlights vimrc-mode vi-tilde-fringe uuidgen use-package typit mmt toc-org tagedit synosaurus sudoku sr-speedbar sql-indent spaceline powerline smeargle slim-mode shell-pop scss-mode sass-mode reveal-in-osx-finder restclient-helm restart-emacs rainbow-delimiters pyvenv pytest pyenv-mode py-isort pug-mode popwin pip-requirements persp-mode persistent-scratch pdf-tools tablist pcre2el pbcopy paradox spinner pacmacs ox-reveal ox-gfm osx-trash osx-dictionary orgit org-projectile org-category-capture org-present org-pomodoro alert log4e gntp org-plus-contrib org-mime org-jira org-download org-bullets open-junk-file ob-restclient ob-http neotree multi-term move-text mmm-mode markdown-toc markdown-mode magit-gitflow macrostep lorem-ipsum livid-mode skewer-mode simple-httpd live-py-mode linum-relative link-hint launchctl json-mode json-snatcher json-reformat js2-refactor multiple-cursors js2-mode js-doc indent-guide imenu-list ibuffer-projectile hydra hy-mode hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers parent-mode highlight-indentation helm-themes helm-swoop helm-pydoc helm-projectile helm-mode-manager helm-make projectile helm-gitignore request helm-flx helm-descbinds helm-css-scss helm-cscope xcscope helm-company helm-codesearch helm-c-yasnippet helm-ag haml-mode google-translate golden-ratio go-guru go-eldoc gnuplot gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter gh-md fuzzy flyspell-correct-helm flyspell-correct flycheck-pos-tip pos-tip flycheck pkg-info epl flx-ido flx fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist highlight evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit magit magit-popup git-commit with-editor evil-lisp-state smartparens evil-indent-plus evil-iedit-state iedit evil-exchange evil-escape evil-ediff evil-args evil-anzu anzu evil goto-chg undo-tree eval-sexp-fu eshell-z eshell-prompt-extras esh-help engine-mode emmet-mode elisp-slime-nav dumb-jump dired-subtree dired-hacks-utils diminish dactyl-mode cython-mode csv-mode company-web web-completion-data company-tern dash-functional tern company-statistics company-restclient restclient know-your-http-well company-go go-mode company-emacs-eclim eclim company-anaconda company column-enforce-mode coffee-mode clean-aindent-mode bind-map bind-key beacon auto-yasnippet yasnippet auto-highlight-symbol auto-dictionary auto-compile packed anaconda-mode pythonic f dash s all-the-icons memoize aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line helm avy helm-core async ac-ispell auto-complete popup 2048-game))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
