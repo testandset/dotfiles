@@ -30,3 +30,5 @@ GRTAGS
 
 # pyenv file
 .python-version
+/.java-version
+/.persistent-scratch
