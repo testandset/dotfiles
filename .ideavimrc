@@ -131,6 +131,8 @@ map <silent> <leader><cr> :noh<cr>
 nnoremap gh gT
 nnoremap gl gt
 
+map s :action AceAction<CR>
+
 nnoremap <leader>wl <C-W>l
 nnoremap <leader>wh <C-W>h
 nnoremap <leader>wj <C-W>j
