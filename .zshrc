@@ -144,3 +144,9 @@ autoload -U edit-command-line
 zle -N edit-command-line
 bindkey '^xe' edit-command-line
 bindkey '^x^e' edit-command-line
+
+export SPOTIFY_DOMAIN="shared.cloud.spotify.net"
+
+#jenv set-up
+export PATH="$HOME/.jenv/bin:$PATH"
+eval "$(jenv init -)"
