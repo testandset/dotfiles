@@ -159,14 +159,20 @@ map <leader>fed :e ~/.ideavimrc<cr>
 map <leader>feR :source ~/.ideavimrc<cr>
 
 " Editor actions
+" increment number: <C-a>
+" decrement number: <C-x>
 nnoremap <C-i>              :action Forward<cr>
 nnoremap <C-o>              :action Back<cr>
 nnoremap <C-x>0             :action CloseAllEditors<cr>
 nnoremap <leader>!          :action Terminal.OpenInTerminal<cr>
 nnoremap <leader>*          :action FindUsages<cr>
 nnoremap <leader>/          :action FindInPath<cr>
+nnoremap <leader>;          :action CommentByLineComment<CR>
+vnoremap <leader>;          :action CommentByLineComment<CR>
+nnoremap g,                 :action JumpToNextChange<CR>
+nnoremap g;                 :action JumpToLastChange<CR>
 nnoremap <leader><Space>    :action GotoAction<cr>
-nnoremap <leader><tab>      :action VimFilePrevious<cr>
+nnoremap <leader><tab>      <C-S-6>
 nnoremap <leader>?          :map<cr>
 nnoremap <leader>bi         :action FileStructurePopup<cr>
 nnoremap <leader>cc         :action CompileDirty<cr>
@@ -188,6 +194,7 @@ nnoremap <leader>gfl        :action Vcs.ShowTabbedFileHistory<cr>
 nnoremap <leader>gl         :action Github.Open.In.Browser<cr>
 nnoremap <leader>gs         :action Vcs.Show.Local.Changes<cr>
 nnoremap <leader>gt         :action GotoTest<cr>
+nnoremap <leader>is         :action InsertLiveTemplate<CR>
 nnoremap <leader>mrg        :action Generate<cr>
 nnoremap <leader>oi         :action OptimizeImports<cr>
 nnoremap <leader>p!         :action ActivateTerminalToolWindow<cr>
@@ -195,6 +202,8 @@ nnoremap <leader>ry         :action PasteMultiple<cr>
 nnoremap <leader>sc         :nohlsearch<cr>
 nnoremap <leader>se         :action RenameElement<cr>
 nnoremap <leader>sh         :action HighlightUsagesInFile<cr>
+nnoremap <leader>T          :action RerunFailedTests<cr>
+nnoremap <A-Space>    wh:action EditorHungryBackSpace<CR>
 nnoremap <leader>zr         :action EditorResetFontSize<cr>
 vnoremap <leader>em         :action ExtractMethod<cr>
 vnoremap =                  :action ReformatCode<cr>
