@@ -150,3 +150,5 @@ export SPOTIFY_DOMAIN="shared.cloud.spotify.net"
 #jenv set-up
 export PATH="$HOME/.jenv/bin:$PATH"
 eval "$(jenv init -)"
+
+export LC_ALL=en_GB.UTF-8
