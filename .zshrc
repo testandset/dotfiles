@@ -72,7 +72,6 @@ export UPDATE_ZSH_DAYS=13
 plugins=(
   git
   zsh-autosuggestions
-  zsh-syntax-highlighting
   pyenv
   vi-mode
 )
@@ -162,3 +161,14 @@ export PATH="$HOME/.jenv/bin:$PATH"
 eval "$(jenv init -)"
 
 export LC_ALL=en_GB.UTF-8
+
+# autocompletion
+zmodload zsh/complist
+zstyle ':completion:*' menu select=0 interactive
+setopt menucomplete
+
+autoload -Uz compinit
+compinit
+
+# emacs metals
+export PATH="/usr/local/bin/metals-emacs:$PATH"
