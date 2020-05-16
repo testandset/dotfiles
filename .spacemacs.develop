@@ -83,7 +83,9 @@ This function should only modify configuration layer settings."
      chrome
      epub
      xkcd
-     games)
+     games
+     dee ;; personal layer
+     )
 
    ;; List of additional packages that will be installed without being
    ;; wrapped in a layer. If you need some configuration for these
@@ -94,13 +96,9 @@ This function should only modify configuration layer settings."
    ;; Also include the dependencies as they will not be resolved automatically.
    dotspacemacs-additional-packages '(
                                       all-the-icons
-                                      beacon ;; Highlight the curson when it moves
                                       dired-subtree
-                                      engine-mode
-                                      git-gutter ;; show markers on the left margin for changed/added/deleted lines
                                       helm-codesearch
                                       org-jira
-                                      persistent-scratch
                                       sr-speedbar
                                       synosaurus ;;thesaurus
                                       wucuo ;; camelcase spell-check
@@ -116,7 +114,9 @@ This function should only modify configuration layer settings."
    dotspacemacs-frozen-packages '()
 
    ;; A list of packages that will not be installed and loaded.
-   dotspacemacs-excluded-packages '()
+   dotspacemacs-excluded-packages '(
+                                    yas-snippet
+                                    )
 
    ;; Defines the behaviour of Spacemacs when installing packages.
    ;; Possible values are `used-only', `used-but-keep-unused' and `all'.
@@ -506,97 +506,20 @@ This function is called at the very end of Spacemacs startup, after layer
 configuration.
 Put your configuration code here, except for variables that should be set
 before packages are loaded."
-  (defun dee/convert-to-jira ()
-    "Convert org mode to jira markdown"
-    (interactive)
-    (push-mark (save-excursion
-                 (pandoc-set-write "org")
-                 (pandoc--call-external "jira" nil (when (use-region-p) (cons (region-beginning) (region-end))))
-                 (sit-for 1)
-                 (replace-buffer-contents (get-buffer pandoc--output-buffer-name))
-                 )))
 
-  (defun dee/org-archive-done-tasks ()
-    "Archive all done tasks in buffer"
-    (interactive)
-    (org-map-entries
-     (lambda ()
-       (org-archive-subtree)
-       (setq org-map-continue-from (org-element-property :begin (org-element-at-point))))
-     "/DONE" 'tree))
+  ;; modes
+  ;;(global-subword-mode)
+  ;; (wucuo-start) ;;spell check camelcase
 
-  (setq browse-url-browser-function 'browse-url-default-macosx-browser)
-
-  (setq mac-command-modifier 'super)
-  (setq delete-by-moving-to-trash t)
-  ;; Add handlers for git-link
-  (eval-after-load 'git-link
-    '(progn
-       (add-to-list 'git-link-remote-alist
-                    '("ghe.spotify.net" git-link-github))
-       (add-to-list 'git-link-commit-remote-alist
-                    '("ghe.spotify.net" git-link-commit-github))))
-
-  (setq neo-theme 'icons)
   ;; enable this if icon loading is slow
   ;; (setq inhibit-compacting-font-caches t)
+  (setq mac-command-modifier 'super)
+  (setq browse-url-browser-function 'browse-url-default-macosx-browser)
+  (setq delete-by-moving-to-trash t)
+  (setq neo-theme 'icons)
 
-  ;; Highlight cursor point on movement
-  (beacon-mode 1)
-
-  ;;(global-subword-mode)
-
-  ;; auto save/restore scratch buffer
-  (persistent-scratch-setup-default)
-
-  ;; search engines
-  (engine-mode t)
-  ;; (setq engine/browser-function 'eww-browse-url)
-  (engine/set-keymap-prefix (kbd "s-/"))
-  (defengine google
-    "http://www.google.com/search?ie=utf-8&oe=utf-8&q=%s"
-    :keybinding "g"
-    )
-
-  ;; spell check camelcase
-  ;; (wucuo-start)
-
-  (with-eval-after-load 'org
-    ;; Replace org ... with fancy
-    (setq org-ellipsis " ▼")
-    (setq org-directory "~/Documents/Drive/org")
-    (setq org-agenda-files (list org-directory))
-
-    (setq org-capture-templates
-          '(("t" "Todo" entry (file+headline "~/Documents/Drive/org/tasks.org" "Tasks")
-             "* TODO %?\n  %U\n  %i\n  %a")
-            ("s" "Code Snippet" entry
-             (file "~/Documents/Drive/org/snippets.org")
-             ;; Prompt for tag and language
-             "* %?\t%^g\n#+BEGIN_SRC %^{language}\n\n#+END_SRC")
-            ))
-
-    ;; org auto complete sections
-    (require 'org-tempo)
-    (setq org-structure-template-alist
-          (quote
-           (("a" . "export ascii")
-            ("c" . "center")
-            ("C" . "comment")
-            ("e" . "example")
-            ("E" . "export")
-            ("h" . "export html")
-            ("l" . "export latex")
-            ("q" . "quote")
-            ("s" . "src")
-            ("v" . "verse"))))
-    )
-
-  (setq magit-repository-directories '(("~/repos" . 2)))
+  ;; (setq magit-repository-directories '(("~/repos" . 2)))
   (setq global-git-gutter-mode t)
-  (setq git-gutter:hide-gutter t)
-  (setq git-gutter:lighter " ġ")
-  ;; (git-gutter:linum-setup)
   (with-eval-after-load 'magit
     (defun dee/visit-pull-request-url ()
       "Visit the current branch's PR on Github."
@@ -618,48 +541,7 @@ before packages are loaded."
   (spacemacs/toggle-mode-line-minor-modes-off)
   (setq kill-do-not-save-duplicates t)
 
-  ;; evil-escape universal
-  (setq-default evil-escape-key-sequence "jk")
-
   (setq jiralib-url "https://jira.spotify.net")
-
-  ;; Move visual lines instead of actual lines
-  (define-key evil-normal-state-map (kbd "j") 'evil-next-visual-line)
-  (define-key evil-normal-state-map (kbd "k") 'evil-previous-visual-line)
-  ;; (define-key evil-normal-state-map (kbd "DEL") 'pop-global-mark)
-
-  ;; Window undo
-  (define-key evil-normal-state-map (kbd "C-;") 'winner-undo)
-  (define-key evil-normal-state-map (kbd "C-\'") 'winner-redo)
-
-  (define-key evil-normal-state-map (kbd "s-b") 'helm-mini)
-  (define-key evil-normal-state-map (kbd "s-k") 'kill-this-buffer)
-  (define-key evil-normal-state-map (kbd "s-w") 'delete-window)
-
-  (define-key evil-normal-state-map (kbd "s") 'evil-avy-goto-char-2)
-
-  (define-key evil-normal-state-map (kbd "0") 'evil-next-line-1-first-non-blank)
-  (define-key evil-normal-state-map (kbd "_") 'evil-digit-argument-or-evil-beginning-of-line)
-  (define-key evil-normal-state-map (kbd "C-x c") 'aya-create)
-  (define-key evil-normal-state-map (kbd "C-x e") 'spacemacs/auto-yasnippet-expand)
-
-  (spacemacs/set-leader-keys
-    "bo" 'switch-to-buffer-other-window
-    "sh" 'helm-resume
-    )
-
-  ;; enable auto-complete globally
-  (global-company-mode)
-
-  ;; enable dumb-jump
-  (dumb-jump-mode)
-  (with-eval-after-load 'dumb-jump
-    (define-key evil-normal-state-map (kbd "M-g o") 'dumb-jump-go-other-window)
-    (define-key evil-normal-state-map (kbd "C-]") 'dumb-jump-go)
-    (define-key evil-normal-state-map (kbd "M-g j") 'dumb-jump-go)
-    (define-key evil-normal-state-map (kbd "M-g i") 'dumb-jump-go-prompt)
-    (define-key evil-normal-state-map (kbd "M-g x") 'dumb-jump-go-prefer-external)
-    )
 
 
   (setq projectile-project-search-path '("~/repos/"))
@@ -672,9 +554,6 @@ before packages are loaded."
   ;; Open new files in an existing frame if there is one
   (setq ns-pop-up-frames nil)
 
-  ;; Treat underscores as part of word in programming modes
-  (add-hook 'prog-mode-hook #'(lambda () (modify-syntax-entry ?_ "w")))
-
   (setq evil-want-Y-yank-to-eol t)
   (setq helm-buffer-max-length 40)
   (setq helm-ff-auto-update-initial-value t)
@@ -685,62 +564,6 @@ before packages are loaded."
    (setq synosaurus-backend (quote synosaurus-backend-wordnet))
    (setq vc-follow-symlinks t)
 
-
-   ;; java set-up
-   (with-eval-after-load 'lsp-ui
-     (setq lsp-ui-sideline-show-code-actions nil)
-     (setq lsp-ui-sideline-show-symbol nil)
-     (lsp-ui-sideline-toggle-symbols-info)
-     (setq lsp-ui-doc-enable nil)
-     (setq lsp-java-format-settings-url "~/Documents/spotify-checkstyle-idea.xml")
-
-     ;; no order as that is as per Intellij
-     (setq lsp-java-import-order nil))
-
-   ;;magit log on date
-   (with-eval-after-load 'magit
-     (autoload 'org-read-date "org")
-
-     (defun magit-org-read-date (prompt &optional _default)
-       (org-read-date 'with-time nil nil prompt))
-
-     (magit-define-popup-option 'magit-log-popup
-       ?s "Since date" "--since=" #'magit-org-read-date)
-
-     (magit-define-popup-option 'magit-log-popup
-       ?u "Until date" "--until=" #'magit-org-read-date)
-
-     ;; enable spell check for commit
-     (add-hook 'git-commit-setup-hook 'git-commit-turn-on-flyspell)
-     )
-
-   ;;treemacs
-   (with-eval-after-load 'treemacs
-     (defun dee/treemacs-ignore-files (file _)
-       (s-suffix? file ".pyc") ;; compiled python files
-       )
-     (push #'dee/treemacs-ignore-files treemacs-ignored-file-predicates))
-
-   ;; dired
-   (with-eval-after-load 'dired
-     (bind-keys :map dired-mode-map
-               ("i" . dired-subtree-toggle)
-               ("/" . helm-swoop)))
-
-   ;; reuse dired buffers
-   (add-hook 'dired-mode-hook
-             (lambda ()
-               (define-key dired-mode-map (kbd "^")
-                 (lambda () (interactive) (find-alternate-file "..")))
-                                        ; was dired-up-directory
-               ))
-
-   (add-hook 'spacemacs-buffer-mode-hook
-             (lambda ()
-               (define-key spacemacs-buffer-mode-map (kbd "s-b") 'helm-mini)))
-
-   ;; Switch back to chrome after editing
-   (add-hook 'edit-server-done-hook (lambda () (shell-command "open -a \"Google Chrome\"")))
    )
 
 ;; Do not write anything past this comment. This is where Emacs will
