@@ -37,12 +37,16 @@ tee -a <file> # Intercept stout to a file
 for i in $(cat tmp.tmp); do jhurl -s services.gew1.spotify.net --method GET "hm://userdata/account?user_id=$i"; done #quick loop through
 top -H -p <pid> #See threads from a process
 ps -T -P <pid> #All threads from a process
+sed -n '3,5p' filen #Get range of files from a file
+awk -F, '{print $2}' file #Print columns from file
+comm -23 filea fileb #Diff files
+echo "userId,ppid,country,plan" | jq -cRra 'split(",") | {"userId": .[0], "productPeriodId": .[1] | sub("^01_"; "") | tonumber, "country": .[2],  "planType": .[3]}' #csv to json
 ** Tmux
 tmux new -s myname  # start new with session name
 tmux a -t myname  # attach to named session
 tmux ls  # list session
 tmux kill-session -t myname  # kill session by name
-CTRL + B, D  # tmux detach
+CTRL-bD  # tmux detach
 
 ** Gcloud
 gcloud sql connect family-db-guc --user=family --quiet --project=ib-family # connect to cloud sql
@@ -60,9 +64,9 @@ jhurl -s services.gew1.spotify.net hm://identity/v1/user/%7Bm1ck3y%7D | jq # use
 jhurl -s services.gew1.spotify.net hm://userdata/account?user_id=1417e509674f48d9a77ffea4ff5d1816 -p | jq # userdata by user_id
 *** Family
 curl -H "Content-Type: application/json" -H "_ui:$(printf "%b" '\x01')r USER_ID" -s http://host.spotify.net/v1/family/home # curl for hermes
-echo "{"planType":"DUO"}" | jhurl -s services.gew1 -X "POST" "hm://family/v1/internal/family/home" --userid=de88319ce6b44089b811a940cdf10db0 -p | jq #create a family master
-echo "{"address":"20 rue Beranger, 75003 Paris","placeId":"ChIJ9wd7mAhu5kcRwz5BP-XfZts"}" | jhurl -s services.gew1 -X "POST" "hm://family/v1/family/home/onboard" --userid=de88319ce6b44089b811a940cdf10db0 -p | jq # onboard master
-echo "{"inviteToken":"c7y0348bZb7","address":"20 rue Beranger, 75003 Paris"}" | jhurl -s services.gew1 -X "POST" "hm://family/v1/family/member" --userid=85d8fcc00bd34d73acab19175a7139d9 -p | jq # add member
+echo '{"planType":"DUO"}' | jhurl -s services.gew1 -X "POST" "hm://family/v1/internal/family/home" --userid=de88319ce6b44089b811a940cdf10db0 -p | jq #create a family master
+echo '{"address":"20 rue Beranger, 75003 Paris","placeId":"ChIJ9wd7mAhu5kcRwz5BP-XfZts"}' | jhurl -s services.gew1 -X "POST" "hm://family/v1/family/home/onboard" --userid=de88319ce6b44089b811a940cdf10db0 -p | jq # onboard master
+echo '{"inviteToken":"c7y0348bZb7","address":"20 rue Beranger, 75003 Paris"}' | jhurl -s services.gew1 -X "POST" "hm://family/v1/family/member" --userid=85d8fcc00bd34d73acab19175a7139d9 -p | jq # add member
 echo '{"memberId":"3746654e-693b-412e-832c-da61de8c201b"}' | jhurl -s services.shared.cloud.spotify.net -X DELETE hm://family/v1/family/member/3746654e-693b-412e-832c-da61de8c201b --userid a3204151f86243449813313b5bfdb841clea # delete a plan
 jhurl -s services.gew1 -X "DELETE" "hm://family/v1/internal/family/home" --userid=d0d1470adb754bf18f7af9ee52a49f36 # delete home
 jhurl -s services.shared.cloud.spotify.net hm://family/v1/family/home --userid a3204151f86243449813313b5bfdb841 -p | jq # get home for user
@@ -82,3 +86,5 @@ curl -X POST http://localhost:5050/v4/family/provision_subaccount_premium # paym
 ssh-add ~/.ssh/id_rsa #Add ssh keys
 disco role parentalcontrol --spoticloud # service discovery on shared
 dig -t srv _spotify-parental-control._http.services.shared.cloud.spotify.net #service discovery
+curl cheat.sh #CLI cheat sheet
+nohup command &>/dev/null & #run task in background
