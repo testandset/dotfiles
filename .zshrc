@@ -1,3 +1,13 @@
+# Fiz freezes for tramp
+# https://www.emacswiki.org/emacs/TrampMode#toc7
+if [ $TERM = tramp ]; then
+    unset RPROMPT
+    unset RPS1
+    PS1="$ "
+    unsetopt zle
+    unsetopt rcs  # Inhibit loading of further config files
+fi
+
 # If you come from bash you might have to change your $PATH
 export PATH=$HOME/bin:/usr/local/bin:$PATH
 
