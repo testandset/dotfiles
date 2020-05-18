@@ -13,9 +13,9 @@ require("hyper")
 require("ctrl-to-esc")
 require("wifi-watcher")
 require("cherry")
+require("bluetooth_sleep")
 
 -- Get around paste blockers with cmd+alt+v
 hs.hotkey.bind({"cmd", "shift"}, "V", function()
     hs.eventtap.keyStrokes(hs.pasteboard.getContents())
 end)
-

@@ -8,8 +8,9 @@ hs.application.enableSpotlightForNameSearches = true
 function toggleWindowMaximized()
   local win = hs.window.focusedWindow()
   if frameCache[win:id()] then
-    win:setFrame(frameCache[win:id()])
     frameCache[win:id()] = nil
+    local gridSize = hs.grid.getGrid()
+    snap(win, hs.geometry({1, 1, gridSize.w / 2.0, gridSize.h / 2.0}))
   else
     frameCache[win:id()] = win:frame()
     win:maximize()
@@ -49,6 +50,12 @@ function incognitoChrome()
 end
 
 function chromeActiveTabWithName(name)
+  local app = hs.appfinder.appFromName("Google Chrome")
+  local tabs = hs.tabs.tabWindows(app)
+  local windows = app:allWindows()
+  for key, value in ipairs(tabs) do
+    print(value:title())
+  end
   hs.osascript.javascript([[
     // below is javascript code
     var chrome = Application('Google Chrome');

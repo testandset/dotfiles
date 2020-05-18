@@ -12,13 +12,19 @@ function bluetooth(power)
   t:start()
 end
 
+function connect(id)
+  print("Attempting to connect to " .. id)
+  local t = hs.task.new("/usr/local/bin/blueutil", checkBluetoothResult, {"--connect", id})
+end
+
 function f(event)
   if event == hs.caffeinate.watcher.systemWillSleep or
-    event == hs.caffeinate.watcher.screensDidSleep or
-  event == hs.caffeinate.watcher.screensDidLock then
+    event == hs.caffeinate.watcher.screensDidSleep then
     bluetooth("off")
   elseif event == hs.caffeinate.watcher.screensDidWake then
     bluetooth("on")
+    -- connect to bluetooth if its there
+    connect("28-11-a5-dd-a0-ac")
   end
 end
 
