@@ -3,6 +3,14 @@
 hs.application.enableSpotlightForNameSearches(true)
 
 frameCache = {}
+
+function clearFromFrameCache(win)
+  win = win or hs.window.focusedWindow()
+  if frameCache[win:id()] then
+    frameCache[win:id()] = nil
+  end
+end
+
 function toggleWindowMaximized()
   local win = hs.window.focusedWindow()
   if frameCache[win:id()] then
@@ -17,18 +25,23 @@ end
 
 function moveCurrentWindowToNextScreen()
   local win = hs.window.focusedWindow()
+  clearFromFrameCache(win)
   win:moveToScreen(win:screen():next())
   snap(win)
 end
 
 function moveCurrentWindowToLeftHalf()
   local gridSize = hs.grid.getGrid()
-  snap(hs.window.focusedWindow(), hs.geometry({0, 0, gridSize.w / 2.0, gridSize.h}))
+  local win = hs.window.focusedWindow()
+  clearFromFrameCache(win)
+  snap(win, hs.geometry({0, 0, gridSize.w / 2.0, gridSize.h}))
 end
 
 function moveCurrentWindowToRightHalf()
   local gridSize = hs.grid.getGrid()
-  snap(hs.window.focusedWindow(), hs.geometry({gridSize.w / 2.0, 0, gridSize.w / 2.0, gridSize.h}))
+  local win = hs.window.focusedWindow()
+  clearFromFrameCache(win)
+  snap(win, hs.geometry({gridSize.w / 2.0, 0, gridSize.w / 2.0, gridSize.h}))
 end
 
 function launchEmacs()
