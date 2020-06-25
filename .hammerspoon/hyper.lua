@@ -133,21 +133,21 @@ local actionHotKeys = {
 
 -- Hyper key set-up
 HYPER_KEY = ';'
-hyper = false
+isHyperActivated = false
 hyperTime = nil
 down = hs.eventtap.new({hs.eventtap.event.types.keyDown}, function(event)
   local character = event:getCharacters()
-  local keyCode = event:getKeyCode()
+  local withModKey = event:getFlags()['ctrl']
 
-  if character == HYPER_KEY then
-    hyper = true
+  if character == HYPER_KEY and not(withModKey) then
+    isHyperActivated = true
     if hyperTime == nil then
       hyperTime = hs.timer.absoluteTime()
     end
     return true
   end
 
-  if actionHotKeys[character] ~= nil and hyper then
+  if actionHotKeys[character] ~= nil and isHyperActivated then
     actionHotKeys[character]()
     hyperTime = nil
     return true
@@ -158,14 +158,14 @@ down:start()
 
 up = hs.eventtap.new({hs.eventtap.event.types.keyUp}, function(event)
     local character = event:getCharacters()
-    if character == HYPER_KEY and hyper then
+    if character == HYPER_KEY and isHyperActivated then
       local currentTime = hs.timer.absoluteTime()
       if hyperTime ~= nil and (currentTime - hyperTime) / 1000000 < 250 then
         down:stop()
         hs.eventtap.keyStrokes(HYPER_KEY)
         down:start()
       end
-      hyper = false
+      isHyperActivated = false
       hyperTime = nil
     end
 end)
