@@ -24,7 +24,9 @@ function f(event)
   elseif event == hs.caffeinate.watcher.screensDidWake then
     bluetooth("on")
     -- connect to bluetooth if its there
-    connect("28-11-a5-dd-a0-ac")
+    connect("28-11-a5-dd-a0-ac") -- Headphones
+    connect("e0-eb-40-5c-80-dd") -- Magic mouse
+    connect("80-4a-14-6c-d9-dc") -- Keyboard
   end
 end
 
