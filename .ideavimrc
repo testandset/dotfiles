@@ -158,6 +158,11 @@ map <leader>fed :e ~/.ideavimrc<cr>
 " Reload settings
 map <leader>feR :source ~/.ideavimrc<cr>
 
+" Unbind C-g
+nnoremap <C-g>    <Esc>
+vnoremap <C-g>    <Esc>
+inoremap <C-g>    <Esc>a
+
 " Editor actions
 " increment number: <C-a>
 " decrement number: <C-x>
@@ -175,8 +180,11 @@ nnoremap <leader><Space>    :action GotoAction<cr>
 nnoremap <leader><tab>      <C-S-6>
 nnoremap <leader>?          :map<cr>
 nnoremap <leader>bi         :action FileStructurePopup<cr>
+nnoremap <leader>b<C-d>     :action CloseAllEditorsButActive<CR>
+nnoremap <leader>bx         :action CloseAllEditors<CR>
 nnoremap <leader>cc         :action CompileDirty<cr>
-nnoremap <leader>cl         :action CommentByLineComment<cr
+nnoremap <leader>cl         :action CommentByLineComment<cr>
+nnoremap <C-x><C-;>         :action CommentByLineComment<cr>
 nnoremap <leader>cy         yyP:action CommentByLineComment<cr>
 vnoremap <leader>cy         <Esc>yyP:action CommentByLineComment<cr>
 nnoremap <leader>ee         :action Tool_Editors_Emacs<cr>
@@ -203,7 +211,7 @@ nnoremap <leader>sc         :nohlsearch<cr>
 nnoremap <leader>se         :action RenameElement<cr>
 nnoremap <leader>sh         :action HighlightUsagesInFile<cr>
 nnoremap <leader>T          :action RerunFailedTests<cr>
-nnoremap <A-Space>    wh:action EditorHungryBackSpace<CR>
+nnoremap <A-Space>          wh:action EditorHungryBackSpace<CR>
 nnoremap <leader>zr         :action EditorResetFontSize<cr>
 vnoremap <leader>em         :action ExtractMethod<cr>
 vnoremap =                  :action ReformatCode<cr>
