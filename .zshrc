@@ -172,3 +172,8 @@ compinit
 
 # emacs metals
 export PATH="/usr/local/bin/metals-emacs:$PATH"
+
+# docker 'Can not connect to Ryuk' bug workaround
+export TESTCONTAINERS_RYUK_DISABLED=true
+# enable zoxide directory completion
+eval "$(zoxide init zsh)"
