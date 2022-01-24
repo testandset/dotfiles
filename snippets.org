@@ -88,3 +88,14 @@ disco role parentalcontrol --spoticloud # service discovery on shared
 dig -t srv _spotify-parental-control._http.services.shared.cloud.spotify.net #service discovery
 curl cheat.sh #CLI cheat sheet
 nohup command &>/dev/null & #run task in background
+curl ifconfig.me #get public ip
+dig -t SRV _spotify-payment-api-service._http.services.tst1.spotify.net +short #get payments hosts
+dig -t SRV _spotify-family._http.services.tst1.spotify.net +short #get family test hosts
+security -i find-generic-password -a guc -w | pbcopy #get cloudsql password
+dig -t SRV _spotify-family._http.services.tst1.spotify.net +short #family tst1 hosts
+curl -H 'Content-Type: application/json' --data '{"requests": [{"relationship_type":"is_child_of", "destination_period_id": "24689"}]}' http://product-catalog-testing.services.gew1.spotify.net:8090/spotify.productcatalog.v1.beta.ProductCatalogBeta/GetMultipleRelationships #product catalog relationship #
+kubectl --namespace family get secret family-secrets -o yaml #gke family secret sidecar #
+gcloud config set project subs-platform #set project in gcloud
+killall -kill FaceTimeNotificationCenterService #kill facetime notification
+some very long silly command #long silly command
+jhurl --userid a7a72baa095a4fe8a941fa1887eb61e8 -s services.gew1.spotify.net hm://home-mix/settings/v1/me #home-mix opt in
