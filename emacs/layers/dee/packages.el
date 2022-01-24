@@ -18,13 +18,14 @@
   '(
     ;; installs
     beacon ;; blink cursor on jumps
-    persistent-scratch
+    ;; persistent-scratch
     git-link
     engine-mode
     git-gutter ;; show markers on the left margin for changed/added/deleted lines
 
     ;; depends
     org
+    ;; org-roam
     treemacs
     dired
     spacemacs-buffer-mode
@@ -34,6 +35,7 @@
     dumb-jump
     prog-mode
     global-company-mode
+    deft
     )
   "The list of Lisp packages required by the dee layer"
   )
@@ -46,12 +48,12 @@
   (beacon-mode 1)
   )
 
-(defun dee/init-persistent-scratch ()
-  (use-package persistent-scratch
-    :defer t
-    :init
-    ;; auto save/restore scratch buffer
-    (persistent-scratch-setup-default)))
+;; (defun dee/init-persistent-scratch ()
+;;   (use-package persistent-scratch
+;;     :defer t
+;;     :init
+;;     ;; auto save/restore scratch buffer
+;;     (persistent-scratch-setup-default)))
 
 (defun dee/post-init-git-link ()
   (use-package git-link
@@ -98,13 +100,10 @@
     (setq org-capture-templates
           '(("t" "Todo" entry (file+headline "~/Documents/Drive/org/tasks.org" "Tasks")
              "* TODO %?\n  %U\n  %i\n  %a")
-            ("s" "Code Snippet" entry
-             (file "~/Documents/Drive/org/snippets.org")
-             ;; Prompt for tag and language
-             "* %?\t%^g\n#+BEGIN_SRC %^{language}\n\n#+END_SRC")
             ))
 
     ;; org auto complete sections
+    (require 'org-tempo)
     (setq org-structure-template-alist
           (quote
            (("a" . "export ascii")
@@ -117,8 +116,36 @@
             ("q" . "quote")
             ("s" . "src")
             ("v" . "verse"))))
+
+    (add-hook 'org-mode-hook 'turn-on-auto-fill)
     )
   )
+
+;; (defun dee/init-org-roam ()
+;;   (use-package org-roam
+;;     :defer t
+;;     :hook
+;;     (after-init . org-roam-mode)
+;;     :custom
+;;     (org-roam-directory "~/Documents/Drive/org")
+;;     ;; (org-roam-graph-executable 'browse-url-default-macosx-browser)
+;;     :init
+;;     (progn
+;;       (spacemacs/declare-prefix "ar" "org-roam")
+;;       (spacemacs/set-leader-keys
+;;         "arl" 'org-roam
+;;         "art" 'org-roam-dailies-today
+;;         "arf" 'org-roam-find-file
+;;         "arg" 'org-roam-graph)
+
+;;       (spacemacs/declare-prefix-for-mode 'org-mode "mr" "org-roam")
+;;       (spacemacs/set-leader-keys-for-major-mode 'org-mode
+;;         "rl" 'org-roam
+;;         "rt" 'org-roam-dailies-today
+;;         "rb" 'org-roam-switch-to-buffer
+;;         "rf" 'org-roam-find-file
+;;         "ri" 'org-roam-insert
+;;         "rg" 'org-roam-graph))))
 
 (defun dee/post-init-treemacs ()
   (with-eval-after-load 'treemacs
@@ -166,11 +193,11 @@
     (defun magit-org-read-date (prompt &optional _default)
       (org-read-date 'with-time nil nil prompt))
 
-    (magit-define-popup-option 'magit-log-popup
-      ?s "Since date" "--since=" #'magit-org-read-date)
+    ;; (magit-define-popup-option 'magit-log-popup
+    ;;   ?s "Since date" "--since=" #'magit-org-read-date)
 
-    (magit-define-popup-option 'magit-log-popup
-      ?u "Until date" "--until=" #'magit-org-read-date)
+    ;; (magit-define-popup-option 'magit-log-popup
+    ;;   ?u "Until date" "--until=" #'magit-org-read-date)
 
     ;; enable spell check for commit
     (add-hook 'git-commit-setup-hook 'git-commit-turn-on-flyspell)
@@ -208,3 +235,16 @@
 (defun dee/post-init-global-company-mode ()
   (global-company-mode) ;; enable auto-complete globally
   )
+
+(defun dee/init-deft ()
+  (use-package deft
+               :defer t
+               :after org
+               :bind
+               ("C-c n d" . deft)
+               :custom
+               (deft-recursive t)
+               (deft-use-filename-as-title t)
+               (deft-use-filter-string-for-filename t)
+               (deft-default-extension "org")
+               (deft-directory "~/Documents/Drive/org")))
