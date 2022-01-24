@@ -1,5 +1,3 @@
--- Set up a hyper key
-
 hs.application.enableSpotlightForNameSearches(true)
 
 frameCache = {}
@@ -69,22 +67,27 @@ function incognitoChrome()
   end
 end
 
-function switchToNonIncognitoChrome()
-  hs.application.launchOrFocus("Google Chrome")
+function moveChromeTabToNewWindow()
   local chrome = hs.appfinder.appFromName("Google Chrome")
-  local nonIncognitoWindow = chrome:findWindow('^[Incognito]')
-  if nonIncognitoWindow ~= nil then
-    nonIncognitoWindow:focus()
+  local str_menu_item = {"Tab", "Move tab to new window"}
+  chrome:selectMenuItem(str_menu_item)
+end
+
+function switchToNonIncognitoChrome()
+  -- hs.application.launchOrFocus("Google Chrome")
+  local chrome = hs.appfinder.appFromName("Google Chrome")
+  local incognitoWindow = chrome:findWindow('Incognito')
+
+  for key, value in ipairs(chrome:allWindows()) do
+    if value ~= incognitoWindow then
+      value:focus()
+      return true
+    end
   end
 end
 
+
 function chromeActiveTabWithName(name)
-  -- local app = hs.appfinder.appFromName("Google Chrome")
-  -- local tabs = hs.tabs.tabWindows(app)
-  -- local windows = app:allWindows()
-  -- for key, value in ipairs(tabs) do
-  --   print(value:title())
-  -- end
   hs.osascript.javascript([[
     // below is javascript code
     var chrome = Application('Google Chrome');
@@ -110,6 +113,16 @@ function chromeActiveTabWithName(name)
       ]])
 end
 
+function actionNotification()
+  hs.osascript.applescript([[
+    tell application "System Events"
+      tell process "NotificationCenter"
+        click button 1 of window 1
+      end tell
+    end tell
+    ]])
+end
+
 function fn(func, args)
   return function() func(args) end
 end
@@ -118,17 +131,19 @@ function launch(app)
   return fn(hs.application.launchOrFocus, app)
 end
 
-local actionHotKeys = {
-  ['a']=launch("IntelliJ IDEA CE"),
+actionHotKeys = {
+  ['a']=launch("IntelliJ IDEA"),
   ['c']=switchToNonIncognitoChrome,
   ['e']=launchEmacs,
   ['g']=incognitoChrome,
+  ['r']=actionNotification,
   ['s']=fn(chromeActiveTabWithName, "Slack"),
   ['t']=launch("iterm"),
   ['1']=moveCurrentWindowToLeftHalf,
   ['2']=moveCurrentWindowToRightHalf,
   ['3']=toggleWindowMaximized,
   ['4']=moveCurrentWindowToNextScreen,
+  ['5']=moveChromeTabToNewWindow,
 }
 
 -- Hyper key set-up
