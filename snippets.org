@@ -82,6 +82,9 @@ ldapsearch -H ldap://gew1-ds-d-4cgl.gew1.spotify.net -D 'uid=deepak,ou=people,ou
 ** Payments
 curl -X POST http://localhost:5050/v4/family/provision_subaccount_premium # payments http-api port 5050
 
+** GKE
+gcloud container clusters list \n  --project=gke-xpn-1 \n  --filter="resourceLabels[status]=ready" --format="value[delimiter=' '](name,zone)" \n  | xargs -n 2 sh -c 'gcloud container clusters get-credentials $1 --region=$2 --project=gke-xpn-1' sh #Get all gke clusters
+
 ** Misc
 ssh-add ~/.ssh/id_rsa #Add ssh keys
 disco role parentalcontrol --spoticloud # service discovery on shared
@@ -99,3 +102,11 @@ gcloud config set project subs-platform #set project in gcloud
 killall -kill FaceTimeNotificationCenterService #kill facetime notification
 some very long silly command #long silly command
 jhurl --userid a7a72baa095a4fe8a941fa1887eb61e8 -s services.gew1.spotify.net hm://home-mix/settings/v1/me #home-mix opt in
+gcloud container clusters list --project=gke-xpn-1 --filter="resourceLabels[env]=production" --format="value(name)"
+ #list all gke clusters
+kubectl config set-context --current --context=gke_gke-xpn-1_asia-east1_asia-east1-bu0y --namespace=concerts-concerts  #k8 context set
+gcloud beta sql operations wait --project spotify-student e8ae1790-b6ab-488d-8540-21f400000024 #wait for cloudsql operation
+# ee257b28c0764c80b82689bff3c4e89c dskhidia userId #my username userId
+date +%s #UNIX timestamp now
+#ran a very long command #awesome sause
+kubectx #kube stuff

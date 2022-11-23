@@ -70,8 +70,8 @@ export UPDATE_ZSH_DAYS=13
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(
-  git
-  zsh-autosuggestions
+  # git
+  # zsh-autosuggestions
   pyenv
   vi-mode
 )
@@ -107,10 +107,25 @@ export SSH_KEY_PATH="~/.ssh/rsa_id"
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 alias c=clear
-# alias vim="emacsclient -nw -s ~/.emacs.d/server/server"
 alias e="emacsclient -nw -s ~/.emacs.d/server/server"
-# alias vi="emacsclient -nw -s ~/.emacs.d/server/server"
+alias curltime='curl -i -w "@/Users/deepakk/repos/dotfiles/curl-format.txt" -o /dev/null'
 
+# share history across multiple zsh sessions
+setopt SHARE_HISTORY
+# append to history
+setopt APPEND_HISTORY
+# adds commands as they are typed, not at shell exit
+# setopt INC_APPEND_HISTORY
+# expire duplicates first
+setopt HIST_EXPIRE_DUPS_FIRST
+# do not store duplications
+setopt HIST_IGNORE_DUPS
+# remove commandwhen the first character on the line is a space
+setopt HIST_IGNORE_SPACE
+#ignore duplicates when searching
+setopt HIST_FIND_NO_DUPS
+# removes blank lines from history
+setopt HIST_REDUCE_BLANKS
 
 # pyenv set-up
 export PYENV_ROOT="$HOME/.pyenv"
@@ -169,11 +184,11 @@ setopt menucomplete
 
 autoload -Uz compinit
 compinit
+eval "$(pyenv init -)"
 
-# emacs metals
-export PATH="/usr/local/bin/metals-emacs:$PATH"
-
-# docker 'Can not connect to Ryuk' bug workaround
-export TESTCONTAINERS_RYUK_DISABLED=true
-# enable zoxide directory completion
-eval "$(zoxide init zsh)"
+# Created by `pipx` on 2022-03-16 21:44:18
+export PATH="$PATH:/Users/deepakk/.local/bin"
+export PATH="/opt/homebrew/opt/mysql-client/bin:$PATH"
+export PATH="/opt/homebrew/opt/node@16/bin:$PATH"
+export PATH="/Users/deepakk/go/bin:$PATH"
+export PATH="/Users/deepakk/dbin:$PATH"
