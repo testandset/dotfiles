@@ -69,7 +69,7 @@ end
 
 function moveChromeTabToNewWindow()
   local chrome = hs.appfinder.appFromName("Google Chrome")
-  local str_menu_item = {"Tab", "Move tab to new window"}
+  local str_menu_item = {"Tab", "Move Tab to New Window"}
   chrome:selectMenuItem(str_menu_item)
 end
 
