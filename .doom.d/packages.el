@@ -66,7 +66,25 @@
 (package! gorepl-mode)
 
 (package! hungry-delete)
-;;(package! pdf-continuous-scroll-mode
-;;  :recipe (:host github :repo "dalanicolai/pdf-continuous-scroll-mode.el"
-;;    :files ("*.el")))
-;;
+(package! kubernetes)
+
+;; pdf tools
+(package! pdf-tools :recipe
+          (:host github
+                 :repo "dalanicolai/pdf-tools"
+                 :branch "pdf-roll"
+                 :files ("lisp/*.el"
+                         "README"
+                         ("build" "Makefile")
+                         ("build" "server")
+                         (:exclude "lisp/tablist.el" "lisp/tablist-filter.el"))))
+
+(package! image-roll :recipe
+          (:host github
+                 :repo "dalanicolai/image-roll.el"))
+
+(package! sqlformat)
+(package! ox-gfm)
+(package! emacs-uuid
+  :recipe (:host github :repo "nicferrier/emacs-uuid"
+                  :files ("*.el")))

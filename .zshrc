@@ -138,11 +138,11 @@ fi
 export EDITOR="vim"
 export VISUAL="vim"
 
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+#[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 # fzf autocompletion
-export FZF_COMPLETION_TRIGGER=''
-bindkey '^T' fzf-completion
-bindkey '^I' $fzf_default_completion
+#export FZF_COMPLETION_TRIGGER=''
+#bindkey '^T' fzf-completion
+#bindkey '^I' $fzf_default_completion
 
 #save previous command to snippets.org
 function prev() {
@@ -186,9 +186,19 @@ autoload -Uz compinit
 compinit
 eval "$(pyenv init -)"
 
+# hook for direnv
+eval "$(direnv hook zsh)"
+
 # Created by `pipx` on 2022-03-16 21:44:18
 export PATH="$PATH:/Users/deepakk/.local/bin"
 export PATH="/opt/homebrew/opt/mysql-client/bin:$PATH"
 export PATH="/opt/homebrew/opt/node@16/bin:$PATH"
 export PATH="/Users/deepakk/go/bin:$PATH"
 export PATH="/Users/deepakk/dbin:$PATH"
+export PATH="/opt/homebrew/opt/node@14/bin:$PATH"
+
+#export scripts
+export PATH="$PATH:/Users/deepak/repos/scripts"
+
+export PATH="/opt/homebrew/opt/postgresql@15/bin:$PATH"
+eval "$(atuin init zsh --disable-up-arrow)"

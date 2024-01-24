@@ -1,45 +1,32 @@
 hs.application.enableSpotlightForNameSearches(true)
 
-frameCache = {}
+windowPositions = {
+  maximized = hs.layout.maximized,
+  centered = {x=0.15, y=0.15, w=0.7, h=0.7},
+  centerHalf = {x = 0.25, y = 0, w = 0.5, h = 1},
+  centerThird = {x = 0.33, y = 0, w = 0.33, h = 1},
 
-function clearFromFrameCache(win)
-  win = win or hs.window.focusedWindow()
-  if frameCache[win:id()] then
-    frameCache[win:id()] = nil
-  end
-end
+  leftHalf = hs.layout.left50,
+  leftThird = {x = 0, y = 0, w = 0.33, h = 1},
+  leftTwoThirds = {x = 0, y = 0, w = 0.66, h = 1},
 
-function toggleWindowMaximized()
-  local win = hs.window.focusedWindow()
-  if frameCache[win:id()] then
-    frameCache[win:id()] = nil
-    local gridSize = hs.grid.getGrid()
-    snap(win, hs.geometry({1, 1, gridSize.w / 2.0, gridSize.h / 2.0}))
-  else
-    frameCache[win:id()] = win:frame()
-    win:maximize()
-  end
-end
+  rightHalf = hs.layout.right50,
+  rightThird = {x = 0.66, y = 0, w = 0.34, h = 1},
+  rightTwoThirds = {x = 0.33, y = 0, w = 0.67, h = 1},
+
+  upper50 = {x=0, y=0, w=1, h=0.5},
+  upper50Left50 = {x=0, y=0, w=0.5, h=0.5},
+  upper50Right50 = {x=0.5, y=0, w=0.5, h=0.5},
+
+  lower50 = {x=0, y=0.5, w=1, h=0.5},
+  lower50Left50 = {x=0, y=0.5, w=0.5, h=0.5},
+  lower50Right50 = {x=0.5, y=0.5, w=0.5, h=0.5},
+}
 
 function moveCurrentWindowToNextScreen()
   local win = hs.window.focusedWindow()
-  clearFromFrameCache(win)
   win:moveToScreen(win:screen():next())
   snap(win)
-end
-
-function moveCurrentWindowToLeftHalf()
-  local gridSize = hs.grid.getGrid()
-  local win = hs.window.focusedWindow()
-  clearFromFrameCache(win)
-  snap(win, hs.geometry({0, 0, gridSize.w / 2.0, gridSize.h}))
-end
-
-function moveCurrentWindowToRightHalf()
-  local gridSize = hs.grid.getGrid()
-  local win = hs.window.focusedWindow()
-  clearFromFrameCache(win)
-  snap(win, hs.geometry({gridSize.w / 2.0, 0, gridSize.w / 2.0, gridSize.h}))
 end
 
 function launchEmacs()
@@ -113,16 +100,6 @@ function chromeActiveTabWithName(name)
       ]])
 end
 
-function actionNotification()
-  hs.osascript.applescript([[
-    tell application "System Events"
-      tell process "NotificationCenter"
-        click button 1 of window 1
-      end tell
-    end tell
-    ]])
-end
-
 function fn(func, args)
   return function() func(args) end
 end
@@ -131,19 +108,129 @@ function launch(app)
   return fn(hs.application.launchOrFocus, app)
 end
 
+lastWindowPosition = {}
+
+windowRotationOrder = {
+  "leftThird",
+  "leftTwoThirds",
+  "rightTwoThirds",
+  "rightThird",
+  "upper50",
+  "lower50",
+  "upper50Left50",
+  "upper50Right50",
+  "lower50Right50",
+  "lower50Left50",
+}
+
+function focusToLeftWindow()
+  local win = hs.window.focusedWindow()
+  local screen = win:screen()
+  local nextWindow = win:windowsToWest(nil, true, true)[1]
+  if nextWindow == nil then
+    nextWindow = screen:toWest():current()
+  end
+  nextWindow:focus()
+end
+
+function focusToRightWindow()
+  local win = hs.window.focusedWindow()
+  local screen = win:screen()
+  local nextWindow = win:windowsToEast(nil, true, true)
+  if nextWindow == nil then
+    nextWindow = screen:toEast():current()
+  else
+    nextWindow = nextWindow[1]
+  end
+
+  nextWindow:focus()
+end
+
+function newRotate()
+  -- still trying to figure out how to do this
+  k = hs.hotkey.modal.new()
+  function k:entered() hs.alert'Entered rotate mode' end
+  function k:exited()  hs.alert'Exited rotate mode'  end
+  k:enter()
+  k:bind('', 'escape', function() k:exit() end)
+  k:bind('', 'h', 'entered h', function() setWindowTo("leftHalf") end)
+end
+
+function rotateWindowPosition()
+  local win = hs.window.focusedWindow()
+  local lastPosition = lastWindowPosition[win:id()]
+
+  if lastPosition == nil then
+    lastPosition = "leftThird"
+    lastWindowPosition[win:id()] = lastPosition
+    setWindowTo(lastPosition)()
+    return
+  end
+
+  local nextPositionIndex = hs.fnutils.indexOf(windowRotationOrder, lastPosition)
+  if nextPositionIndex == nil or nextPositionIndex > #windowRotationOrder then
+    nextPositionIndex = 1
+  else
+    nextPositionIndex = nextPositionIndex + 1
+  end
+
+  local nextPosition = windowRotationOrder[nextPositionIndex]
+
+  lastWindowPosition[win:id()] = nextPosition
+  setWindowTo(nextPosition)()
+end
+
+function setWindowTo(position)
+  return function()
+    hs.window.focusedWindow():moveToUnit(windowPositions[position], 0)
+    lastWindowPosition[hs.window.focusedWindow():id()] = position
+  end
+end
+
+function darkModeStatus()
+   -- return the status of Dark Mode
+   local _, darkModeState = hs.osascript.javascript(
+      'Application("System Events").appearancePreferences.darkMode()'
+   )
+   return darkModeState
+end
+
+function setDarkMode(state)
+   -- Function for setting Dark Mode on/off.
+   -- Argument should be either 'true' or 'false'.
+   return hs.osascript.javascript(
+      string.format(
+         "Application('System Events').appearancePreferences.darkMode.set(%s)", state
+   ))
+end
+
+function toggleDarkMode()
+   -- Toggle Dark Mode status
+   if darkModeStatus() then
+      setDarkMode(false)
+   else
+      setDarkMode(true)
+   end
+end
+
+
 actionHotKeys = {
-  ['a']=launch("IntelliJ IDEA"),
-  ['c']=switchToNonIncognitoChrome,
-  ['e']=launchEmacs,
+  -- ['a']=launch("IntelliJ IDEA"),
+  -- ['c']=switchToNonIncognitoChrome,
+  -- ['e']=launchEmacs,
   ['g']=incognitoChrome,
-  ['r']=actionNotification,
-  ['s']=fn(chromeActiveTabWithName, "Slack"),
-  ['t']=launch("iterm"),
-  ['1']=moveCurrentWindowToLeftHalf,
-  ['2']=moveCurrentWindowToRightHalf,
-  ['3']=toggleWindowMaximized,
-  ['4']=moveCurrentWindowToNextScreen,
+  -- ['r']=rotateWindowPosition,
+  -- ['s']=fn(chromeActiveTabWithName, "Slack"),
+  -- ['t']=launch("iterm"),
+  -- ['x']=clearNotifications,
+  -- ['z']=focusToLeftWindow,
+  -- ['b']=focusToRightWindow,
+  -- ['1']=setWindowTo("leftHalf"),
+  -- ['2']=setWindowTo("rightHalf"),
+  ['3']=setWindowTo("maximized"),
+  -- ['4']=moveCurrentWindowToNextScreen,
   ['5']=moveChromeTabToNewWindow,
+  ['`']=toggleDarkMode,
 }
 
 -- Hyper key set-up

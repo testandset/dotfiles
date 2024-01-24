@@ -29,7 +29,7 @@
 
 ;; If you use `org' and don't want your org files in the default location below,
 ;; change `org-directory'. It must be set before org loads!
-;; (setq org-directory "~/org/")
+(setq org-directory "~/Documents/Drive/org")
 
 ;; This determines the style of line numbers in effect. If set to `nil', line
 ;; numbers are disabled. For relative line numbers, set this to `relative'.
@@ -63,6 +63,14 @@
 ;; set global aggressive indent mode for all programming modes
 ;; (add-hook 'prog-mode-hook #'aggressive-indent-mode)
 
+;; set up flyspell for all text modes
+(add-hook 'text-mode-hook #'flyspell-mode)
+
+;; set up flyspell for all programming modes
+(add-hook 'prog-mode-hook #'flyspell-prog-mode)
+
+;; set up flyspell for magit commit messages
+(add-hook 'git-commit-mode-hook #'flyspell-mode)
 
 
 (use-package! deft
@@ -85,11 +93,20 @@
 (after! org
   (setq org-ellipsis " ▼")
   (setq org-directory "~/Documents/Drive/org")
-  (setq +org-capture-journal-file "~/Documents/Drive/org/journal.org")
   (setq org-agenda-files (list org-directory))
   (setq org-clock-auto-clockout-timer 60)
   (setq org-noter-always-create-frame nil)
-  )
+
+  ;; first remove the old catpture template for "j"
+  (setq org-capture-templates (delq (assoc "j" org-capture-templates) org-capture-templates))
+
+  ;; append to org-capture-templates
+  (add-to-list 'org-capture-templates
+          '("j" "Journal" entry
+           (file+olp+datetree +org-capture-journal-file)
+           "* %U %?\n%i\n%a" :prepend t :empty-lines-before 1))
+
+ )
 
 (after! magit
   (setq magit-repository-directories '(("~/repos" . 2)))
@@ -236,6 +253,8 @@
 ;; enable completion in insert mode
 ;(customize-set-variable 'copilot-enable-predicates '(evil-insert-state-p))
 
+;; insers that things
+
 
 ;; keybindings
 (map!
@@ -247,10 +266,17 @@
  "C-;" #'er/expand-region
  "C-'" #'er/contract-region
  "C-x d" #'dirvish
+ :n "F19" #'+org/toggle-last-clock
  :leader
  "b o" #'switch-to-buffer-other-window
+ :desc "Find org file" "n f" #'dee/helm-org-files
+ "w H" #'evil-window-move-far-left
+ "w L" #'evil-window-move-far-right
+ "w J" #'evil-window-move-very-bottom
+ "w K" #'evil-window-move-very-top
  :desc "Shell command" "!" #'shell-command
  )
+
 
 ;; bind u to undo in visual mode
 (define-key evil-visual-state-map (kbd "u") 'undo-tree-undo)
@@ -287,3 +313,57 @@
         (pdf-view-scroll-down-or-previous-page)
         (other-window 1)))
       (scroll-other-window-down 2))))
+
+(defun dee/helm-org-files ()
+  "Find org file"
+        (interactive)
+        (helm :sources (helm-build-sync-source "Org Files"
+                         :candidates (lambda ()
+                                       (mapcar (lambda (x) (cons (file-name-nondirectory x) x))
+                                               (directory-files-recursively org-directory "\.org$")))
+                         :action '(("Find file" . (lambda (candidate)
+                                                    (find-file candidate)))))))
+
+(use-package! sqlformat
+  :custom
+        (sqlformat-command 'pgformatter)
+  :hook (sql-mode . sqlformat-on-save-mode))
+
+;; set up doc mode keybindings
+;; http://yummymelon.com/devnull/personalizing-emacs-doc-navigation.html
+;; (load! "cc-doc-mode-ux.el")
+;; (require 'cc-doc-mode-ux)
+
+;; set up sql-connection-alist
+(setq sql-connection-alist
+      '((source-db
+         (sql-product 'postgres)
+         (sql-port 5435)
+         (sql-server "localhost")
+         (sql-user "moog-synth@gke-accounts.iam")
+         (sql-database "postgres"))
+        (domain-db
+         (sql-product 'postgres)
+         (sql-port 5433)
+         (sql-server "localhost")
+         (sql-user "moog-synth@gke-accounts.iam")
+         (sql-database "postgres"))))
+
+;; Cloud SQL Proxy
+(defvar cloud-sql-connection-configs
+  '(("source-db" . "spotify-moog:europe-west1:source-db-primary=tcp:5435")
+    ("domain-db" . "spotify-moog:europe-west1:moog-domain=tcp:5433")
+    ))
+
+(defun dee/cloud-sql-proxy (config)
+  "Start or restart the Google Cloud SQL Proxy for the specified CONFIG."
+  (interactive
+   (list (completing-read "Choose a Cloud SQL instance configuration: " cloud-sql-connection-configs nil t)))
+  (let* ((config-entry (assoc config cloud-sql-connection-configs))
+         (instance-name (car config-entry))
+         (connection (cdr config-entry))
+         (process-name (format "cloud-sql-proxy-%s" instance-name)))
+    ;; if the process is already running, kill it
+      (async-shell-command
+       (format "cloud_sql_proxy -instances=%s -enable_iam_login --token=$(gcloud auth print-access-token --impersonate-service-account=moog-synth@gke-accounts.iam.gserviceaccount.com)" connection)
+       process-name)))

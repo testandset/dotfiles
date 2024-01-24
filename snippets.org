@@ -110,3 +110,4 @@ gcloud beta sql operations wait --project spotify-student e8ae1790-b6ab-488d-854
 date +%s #UNIX timestamp now
 #ran a very long command #awesome sause
 kubectx #kube stuff
+awk -F',' 'NR > 1 {sum += $15} END {print sum}' tm-sales.txt #sum csv column

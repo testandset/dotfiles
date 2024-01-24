@@ -150,7 +150,7 @@ nnoremap <leader>b<C-d>    :action CloseAllEditorsButActive<cr>
 " => Misc
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Quickly open a buffer for scribble
-map <leader>bs :e ~/scratch<cr>
+map <leader>x :e ~/scratch<cr>
 
 " Open .ideavimrc
 map <leader>fed :e ~/.ideavimrc<cr>

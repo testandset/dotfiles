@@ -19,6 +19,7 @@
  '(jdee-db-requested-breakpoint-face-colors (cons "#01323d" "#93a61a"))
  '(jdee-db-spec-breakpoint-face-colors (cons "#01323d" "#56697A"))
  '(objed-cursor-color "#ec423a")
+ '(package-selected-packages '(ox-gfm))
  '(pdf-view-midnight-colors (cons "#8d9fa1" "#002732"))
  '(rustic-ansi-faces
    ["#002732" "#ec423a" "#93a61a" "#c49619" "#3c98e0" "#e2468f" "#3cafa5" "#8d9fa1"])
