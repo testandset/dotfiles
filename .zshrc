@@ -138,7 +138,7 @@ fi
 export EDITOR="vim"
 export VISUAL="vim"
 
-#[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 # fzf autocompletion
 #export FZF_COMPLETION_TRIGGER=''
 #bindkey '^T' fzf-completion

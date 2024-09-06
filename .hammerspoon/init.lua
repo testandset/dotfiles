@@ -13,7 +13,7 @@ require("hyper")
 require("ctrl-to-esc")
 require("wifi-watcher")
 
--- require("cherry")
+require("cherry")
 -- require("bluetooth_sleep")
 
 -- Get around paste blockers with cmd+alt+v

@@ -57,7 +57,7 @@
 
 
 (dirvish-override-dired-mode)
-;; highligh cursor on jumps
+;; highlight cursor on jumps
 (beacon-mode 1)
 (setq vc-handled-backends '(Git))
 ;; set global aggressive indent mode for all programming modes
@@ -72,6 +72,14 @@
 ;; set up flyspell for magit commit messages
 (add-hook 'git-commit-mode-hook #'flyspell-mode)
 
+(setq world-clock-list
+      '(
+        ("America/New_York" "New York")
+        ("Asia/Calcutta" "Delhi")
+        ("Europe/London" "London")
+        ("America/Chicago" "Austin")
+        ("Australia/Sydney" "Sydney")
+        ("Asia/Tokyo" "Tokyo")))
 
 (use-package! deft
   :defer t
@@ -91,22 +99,99 @@
   )
 
 (after! org
-  (setq org-ellipsis " ▼")
+  ;; (setq org-ellipsis " ▼")
   (setq org-directory "~/Documents/Drive/org")
-  (setq org-agenda-files (list org-directory))
+  (setq org-agenda-files
+        (mapcar (lambda (file) (expand-file-name file org-directory))
+                '("todo.org" "journal.org")))
   (setq org-clock-auto-clockout-timer 60)
   (setq org-noter-always-create-frame nil)
+  (setq org-log-done 'time)
 
-  ;; first remove the old catpture template for "j"
-  (setq org-capture-templates (delq (assoc "j" org-capture-templates) org-capture-templates))
-
-  ;; append to org-capture-templates
+  ;; first remove the old catpture template for t
+  (setq org-capture-templates (delq (assoc "t" org-capture-templates) org-capture-templates))
   (add-to-list 'org-capture-templates
-          '("j" "Journal" entry
-           (file+olp+datetree +org-capture-journal-file)
-           "* %U %?\n%i\n%a" :prepend t :empty-lines-before 1))
+               '("t" "Personal todo" entry
+                 (file+headline +org-capture-todo-file "Inbox")
+                 "* TODO %?\n%i\n%a" :prepend t)
+               )
 
- )
+  ;; add hook to org-mode to enable auto-save
+  (add-hook 'org-mode-hook 'auto-save-mode)
+
+  ;; Bind the function to a key combination in org-mode
+  (add-hook 'org-mode-hook
+            (lambda ()
+              (local-set-key (kbd "C-c d") 'insert-current-date-org-format)))
+
+
+  ;; set up epub export
+  ;; (require 'ox-epub)
+  )
+
+(after! org-agenda
+  (add-to-list 'org-agenda-custom-commands
+               '("d" "Daily Agenda"
+                 ((agenda ""
+                          ((org-agenda-files '("journal.org"))
+                           (org-agenda-overriding-header "Week Schedule")
+                           ))
+
+                  (alltodo "" ((org-agenda-files '("journal.org"))
+                               (org-agenda-overriding-header "Tasks:")
+                               (org-agenda-skip-function
+                                '(org-agenda-skip-entry-if 'todo '("IDEA"))))
+                           )
+                  (alltodo ""
+                           ((org-agenda-files '("journal.org"))
+                            (org-agenda-overriding-header "Ideas:")
+                            (org-agenda-skip-function
+                             (lambda ()
+                               (org-agenda-skip-entry-if 'notregexp "IDEA")))
+                            ))
+                  (alltodo "" ((org-agenda-files '("todo.org"))
+                               (org-agenda-overriding-header "Back Burner:")
+                               (org-agenda-skip-function
+                                '(org-agenda-skip-entry-if 'todo '("IDEA")))))
+                  ))))
+
+(use-package! org-reverse-datetree
+  :after org
+  :config
+  (setq-default org-reverse-datetree-level-formats
+                '("%Y"                    ; year
+                  (lambda (time) (format-time-string "%Y-%m %B" (org-reverse-datetree-monday time))) ; month
+                  "%Y-%m-%d %A"           ; date
+                  ))
+
+  (setq org-capture-templates (delq (assoc "j" org-capture-templates) org-capture-templates))
+  (add-to-list 'org-capture-templates
+               '("j" "Journal" entry
+                 (file+function +org-capture-journal-file
+                                (lambda ()
+                                  (org-reverse-datetree-goto-date-in-file
+                                   nil :olp )))
+                 "* %?\n%i\n%a" :prepend t))
+  (evil-define-key '(normal) calendar-mode-map (kbd "RET") #'org-reverse-datetree-display-entry)
+  )
+;; pretty org
+;; (with-eval-after-load 'org (global-org-modern-mode))
+
+
+(use-package! ox-epub)
+;; (use-package! chatgpt)
+
+;; set up org-download
+(use-package! org-download)
+(after! org-download
+  (setq org-download-method 'directory)
+  (setq org-download-image-org-width 600)
+  (setq org-download-image-dir "~/Documents/Drive/org/images")
+  (setq org-download-link-format "[[file:%s]]\n"
+        org-download-abbreviate-filename-function #'file-relative-name)
+  (setq org-download-link-format-function #'org-download-link-format-function-default)
+  )
+
 
 (after! magit
   (setq magit-repository-directories '(("~/repos" . 2)))
@@ -168,42 +253,42 @@
       :desc "dap breakpoint log message" "l" #'dap-breakpoint-log-message)
 
 ;; accept completion from copilot and fallback to company
-(use-package! copilot
-  :hook (prog-mode . copilot-mode)
-  :custom
-  (copilot-node-executable "/opt/homebrew/opt/node@16/bin/node")
-  :bind (("C-TAB" . 'copilot-accept-completion-by-word)
-         ("C-<tab>" . 'copilot-accept-completion-by-word)
-         ("M-TAB" . 'copilot-next-completion)
-         ("M-<tab>" . 'copilot-next-completion)
-         ("M-S-TAB" . 'copilot-previous-completion)
-         ("M-S-<tab>" . 'copilot-previous-completion)
-         :map copilot-completion-map
-         ("<tab>" . 'copilot-accept-completion)
-         ("TAB" . 'copilot-accept-completion)))
+;; (use-package! copilot
+;;   :hook (prog-mode . copilot-mode)
+;;   :custom
+;;   (copilot-node-executable "/opt/homebrew/bin/node")
+;;   :bind (("C-TAB" . 'copilot-accept-completion-by-word)
+;;          ("C-<tab>" . 'copilot-accept-completion-by-word)
+;;          ("M-TAB" . 'copilot-next-completion)
+;;          ("M-<tab>" . 'copilot-next-completion)
+;;          ("M-S-TAB" . 'copilot-previous-completion)
+;;          ("M-S-<tab>" . 'copilot-previous-completion)
+;;          :map copilot-completion-map
+;;          ("<tab>" . 'copilot-accept-completion)
+;;          ("TAB" . 'copilot-accept-completion)))
 
 ;; Github codespaces
-(use-package! codespaces
-  :config
-  ;; (codespaces-setup)
-  (unless (executable-find "gh")
-    (user-error "Could not find `gh' program in your PATH"))
-  (unless (featurep 'json)
-    (user-error "Emacs JSON support not available; your Emacs is too old"))
-  (let ((ghcs (assoc "ghcs" tramp-methods))
-        (ghcs-methods '((tramp-login-program "gh")
-                        (tramp-login-args (("codespace") ("ssh") ("-c") ("%h")))
-                        (tramp-remote-shell "/bin/bash")
-                        (tramp-remote-shell-login ("-l"))
-                        (tramp-remote-shell-args ("-c")))))
-    ;; just for debugging the methods
-    (if ghcs (setcdr ghcs ghcs-methods)
-      (push (cons "ghcs" ghcs-methods) tramp-methods)))
-  (tramp-set-completion-function "ghcs" '((codespaces-tramp-completion ""))))
+;; (use-package! codespaces
+;;   :config
+;;   ;; (codespaces-setup)
+;;   (unless (executable-find "gh")
+;;     (user-error "Could not find `gh' program in your PATH"))
+;;   (unless (featurep 'json)
+;;     (user-error "Emacs JSON support not available; your Emacs is too old"))
+;;   (let ((ghcs (assoc "ghcs" tramp-methods))
+;;         (ghcs-methods '((tramp-login-program "gh")
+;;                         (tramp-login-args (("codespace") ("ssh") ("-c") ("%h")))
+;;                         (tramp-remote-shell "/bin/bash")
+;;                         (tramp-remote-shell-login ("-l"))
+;;                         (tramp-remote-shell-args ("-c")))))
+;;     ;; just for debugging the methods
+;;     (if ghcs (setcdr ghcs ghcs-methods)
+;;       (push (cons "ghcs" ghcs-methods) tramp-methods)))
+;;   (tramp-set-completion-function "ghcs" '((codespaces-tramp-completion ""))))
 
-(use-package! tramp
-  :config
-  (add-to-list 'tramp-remote-path 'tramp-own-remote-path))
+;; (use-package! tramp
+;;   :config
+;;   (add-to-list 'tramp-remote-path 'tramp-own-remote-path))
 
 ;; eglot config
 ;; taken from https://github.com/golang/tools/blob/master/gopls/doc/emacs.md#configuring-eglot
@@ -237,6 +322,10 @@
                     (matcher . "CaseSensitive")))))
   )
 
+;; (use-package! gptel
+;;   :config
+;;   )
+
 ;; (use-package! lsp
 ;;   :custom
 ;;   ;; enable gopls over tramp
@@ -251,7 +340,7 @@
 ;;   )
 
 ;; enable completion in insert mode
-;(customize-set-variable 'copilot-enable-predicates '(evil-insert-state-p))
+                                        ;(customize-set-variable 'copilot-enable-predicates '(evil-insert-state-p))
 
 ;; insers that things
 
@@ -270,11 +359,15 @@
  :leader
  "b o" #'switch-to-buffer-other-window
  :desc "Find org file" "n f" #'dee/helm-org-files
+ :desc "Open journal" "n j" (lambda () (interactive) (find-file (concat org-directory "/journal.org")))
  "w H" #'evil-window-move-far-left
  "w L" #'evil-window-move-far-right
  "w J" #'evil-window-move-very-bottom
  "w K" #'evil-window-move-very-top
  :desc "Shell command" "!" #'shell-command
+ :map org-mode-map
+ :localleader
+ "O" #'org-occur
  )
 
 
@@ -282,7 +375,7 @@
 (define-key evil-visual-state-map (kbd "u") 'undo-tree-undo)
 (evil-define-key '(normal motion) evil-snipe-local-mode-map (kbd "s") nil) ;; unbind s
 (evil-define-key '(operator) evil-snipe-local-mode-map (kbd "s") nil) ;; unbind s
-(map! :n "s" #'evil-avy-goto-char-2
+(map! :n "s" #'evil-avy-goto-char-timer
       :n "0" 'evil-next-line-1-first-non-blank)
 
 
@@ -300,7 +393,7 @@
          (mode (with-selected-window wind major-mode)))
     (if (eq mode 'pdf-view-mode)
         (with-selected-window wind
-      (pdf-view-scroll-up-or-next-page))
+          (pdf-view-scroll-up-or-next-page))
       (scroll-other-window 2))))
 
 (defun dee/scroll-other-window-down ()
@@ -308,25 +401,25 @@
   (let* ((wind (other-window-for-scrolling))
          (mode (with-selected-window wind major-mode)))
     (if (eq mode 'pdf-view-mode)
-    (with-selected-window wind
-      (progn
-        (pdf-view-scroll-down-or-previous-page)
-        (other-window 1)))
+        (with-selected-window wind
+          (progn
+            (pdf-view-scroll-down-or-previous-page)
+            (other-window 1)))
       (scroll-other-window-down 2))))
 
 (defun dee/helm-org-files ()
   "Find org file"
-        (interactive)
-        (helm :sources (helm-build-sync-source "Org Files"
-                         :candidates (lambda ()
-                                       (mapcar (lambda (x) (cons (file-name-nondirectory x) x))
-                                               (directory-files-recursively org-directory "\.org$")))
-                         :action '(("Find file" . (lambda (candidate)
-                                                    (find-file candidate)))))))
+  (interactive)
+  (helm :sources (helm-build-sync-source "Org Files"
+                   :candidates (lambda ()
+                                 (mapcar (lambda (x) (cons (file-name-nondirectory x) x))
+                                         (directory-files-recursively org-directory "\.org$")))
+                   :action '(("Find file" . (lambda (candidate)
+                                              (find-file candidate)))))))
 
 (use-package! sqlformat
   :custom
-        (sqlformat-command 'pgformatter)
+  (sqlformat-command 'pgformatter)
   :hook (sql-mode . sqlformat-on-save-mode))
 
 ;; set up doc mode keybindings
@@ -364,6 +457,43 @@
          (connection (cdr config-entry))
          (process-name (format "cloud-sql-proxy-%s" instance-name)))
     ;; if the process is already running, kill it
-      (async-shell-command
-       (format "cloud_sql_proxy -instances=%s -enable_iam_login --token=$(gcloud auth print-access-token --impersonate-service-account=moog-synth@gke-accounts.iam.gserviceaccount.com)" connection)
-       process-name)))
+    (async-shell-command
+     (format "cloud_sql_proxy -instances=%s -enable_iam_login --token=$(gcloud auth print-access-token --impersonate-service-account=moog-synth@gke-accounts.iam.gserviceaccount.com)" connection)
+     process-name)))
+
+(defun dee/org-export-all-html ()
+  "Merge all org notes in a file and export it to html"
+  (interactive)
+  (let (
+        (files (directory-files (concat org-directory "/slipbox") t "\.org$"))
+        (merged-file "notes.org")
+        )
+    (with-temp-buffer merged-file
+                      (insert "#+TITLE: Notes\n")
+                      (insert "#+SETUPFILE: https://fniessen.github.io/org-html-themes/org/theme-readtheorg.setup\n")
+                      (insert "#+OPTIONS: broken-links:mark\n")
+                      (dolist
+                          ;; files are named with a date-name format, sort them by name
+                          ;; split the file name by - and take the last part
+                          (file (sort files (lambda (a b) (string< (car (last (split-string a "-"))) (car (last (split-string b "-")))))))
+                        (let ((file-contents (with-temp-buffer
+                                               (insert-file-contents file)
+                                               (buffer-string)))
+                              (file-title (with-temp-buffer
+                                            (insert-file-contents file)
+                                            (goto-char (point-min))
+                                            (re-search-forward "^#\\+TITLE: \\(.*\\)$")
+                                            (match-string 1))))
+                          (insert "* " file-title "\n")
+                          (insert (replace-regexp-in-string "^" "  " file-contents))
+                          (insert "\n\n")
+                          ))
+                      ;; write file in org-directory
+                      (write-file (concat org-directory "/" merged-file))
+                      (org-html-export-to-html)
+                      )
+    )
+  )
+
+;; run function asynchrounously
+;; (async-start dee/org-export-all-html)

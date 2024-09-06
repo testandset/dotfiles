@@ -19,6 +19,10 @@
  '(jdee-db-requested-breakpoint-face-colors (cons "#01323d" "#93a61a"))
  '(jdee-db-spec-breakpoint-face-colors (cons "#01323d" "#56697A"))
  '(objed-cursor-color "#ec423a")
+ '(org-agenda-files
+   '("/Users/deepakk/Documents/Drive/org/journal.org" "/Users/deepakk/Documents/Drive/org/todo.org"))
+ '(org-safe-remote-resources
+   '("\\`https://fniessen\\.github\\.io/org-html-themes/org/theme-readtheorg\\.setup\\'"))
  '(package-selected-packages '(ox-gfm))
  '(pdf-view-midnight-colors (cons "#8d9fa1" "#002732"))
  '(rustic-ansi-faces
