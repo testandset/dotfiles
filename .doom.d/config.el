@@ -25,7 +25,7 @@
 ;; There are two ways to load a theme. Both assume the theme is installed and
 ;; available. You can either set `doom-theme' or manually load a theme with the
 ;; `load-theme' function. This is the default:
-(setq doom-theme 'doom-one)
+(setq doom-theme 'doom-gruvbox)
 
 ;; If you use `org' and don't want your org files in the default location below,
 ;; change `org-directory'. It must be set before org loads!
@@ -57,8 +57,9 @@
 
 
 (dirvish-override-dired-mode)
-;; highlight cursor on jumps
-(beacon-mode 1)
+(add-hook 'text-mode-hook (lambda () (writegood-mode -1)))
+(add-hook 'org-mode-hook (lambda () (writegood-mode -1)))
+
 (setq vc-handled-backends '(Git))
 ;; set global aggressive indent mode for all programming modes
 ;; (add-hook 'prog-mode-hook #'aggressive-indent-mode)
@@ -80,23 +81,6 @@
         ("America/Chicago" "Austin")
         ("Australia/Sydney" "Sydney")
         ("Asia/Tokyo" "Tokyo")))
-
-(use-package! deft
-  :defer t
-  :init
-  (global-set-key [f8] 'deft)
-  :custom
-  (deft-recursive t)
-  (deft-use-filename-as-title t)
-  (deft-use-filter-string-for-filename t)
-  (deft-default-extension "org")
-  (deft-directory "~/Documents/Drive/org"))
-
-(use-package! org-roam
-  :custom
-  (org-roam-db-autosync-mode)
-  (org-roam-directory "~/Documents/Drive/org/slipbox")
-  )
 
 (after! org
   ;; (setq org-ellipsis " ▼")
@@ -124,15 +108,45 @@
             (lambda ()
               (local-set-key (kbd "C-c d") 'insert-current-date-org-format)))
 
+  (add-hook 'org-trigger-hook 'save-buffer)
 
   ;; set up epub export
   ;; (require 'ox-epub)
   )
 
-(after! org-agenda
+;; (use-package! org-modern
+;;   :after org
+;;   :config
+;;   (global-org-modern-mode))
+
+
+(use-package! deft
+  :defer t
+  :init
+  (global-set-key [f8] 'deft)
+  :custom
+  (deft-recursive t)
+  (deft-use-filename-as-title t)
+  (deft-use-filter-string-for-filename t)
+  (deft-default-extension "org")
+  (deft-directory "~/Documents/Drive/org"))
+
+(use-package! org-roam
+  :after org
+  :custom
+  (org-roam-db-autosync-mode)
+  (org-roam-directory "~/Documents/Drive/org/slipbox")
+  )
+
+
+(use-package! org-agenda
+  :after org
+  :config
+  (setq org-agenda-show-future-repeats nil)
   (add-to-list 'org-agenda-custom-commands
                '("d" "Daily Agenda"
-                 ((agenda ""
+                 (
+                  (agenda ""
                           ((org-agenda-files '("journal.org"))
                            (org-agenda-overriding-header "Week Schedule")
                            ))
@@ -140,8 +154,9 @@
                   (alltodo "" ((org-agenda-files '("journal.org"))
                                (org-agenda-overriding-header "Tasks:")
                                (org-agenda-skip-function
-                                '(org-agenda-skip-entry-if 'todo '("IDEA"))))
-                           )
+                                (lambda() (or
+                                           (org-agenda-skip-entry-if 'todo '("IDEA"))
+                                           (org-agenda-skip-entry-if 'scheduled))))))
                   (alltodo ""
                            ((org-agenda-files '("journal.org"))
                             (org-agenda-overriding-header "Ideas:")
@@ -169,21 +184,16 @@
                '("j" "Journal" entry
                  (file+function +org-capture-journal-file
                                 (lambda ()
-                                  (org-reverse-datetree-goto-date-in-file
-                                   nil :olp )))
-                 "* %?\n%i\n%a" :prepend t))
+                                  (goto-char (point-min))
+                                  (outline-next-heading) ;; ignore the *Daily Tasks* heading
+                                  (org-reverse-datetree-goto-date-in-file)))
+                 "* %?\n%i\n" :prepend t))
   (evil-define-key '(normal) calendar-mode-map (kbd "RET") #'org-reverse-datetree-display-entry)
   )
-;; pretty org
-;; (with-eval-after-load 'org (global-org-modern-mode))
-
-
-(use-package! ox-epub)
-;; (use-package! chatgpt)
 
 ;; set up org-download
-(use-package! org-download)
-(after! org-download
+(use-package! org-download
+  :config
   (setq org-download-method 'directory)
   (setq org-download-image-org-width 600)
   (setq org-download-image-dir "~/Documents/Drive/org/images")
@@ -197,6 +207,11 @@
   (setq magit-repository-directories '(("~/repos" . 2)))
   (setq magit-clone-default-directory "~/repos")
   )
+
+(after! 'browse-at-remote
+  (add-to-list 'browse-at-remote-remote-type-regexps
+               '("your\\.ghe\\.spotify\\.net" . "github")))
+
 
 (after! projectile
   (setq projectile-project-search-path '(("~/repos" . 1))))
@@ -212,11 +227,11 @@
   :custom
   (which-key-idle-delay 0.1))
 
-(use-package! helm
-  :config
-  (map! :leader
-        :desc "M-x" "SPC" #'helm-M-x)
-  )
+;; (use-package! helm
+;;   :config
+;;   (map! :leader
+;;         :desc "M-x" "SPC" #'helm-M-x)
+;;   )
 
 (after! dap-mode
   (setq dap-python-debugger 'debugpy))
@@ -267,25 +282,6 @@
 ;;          ("<tab>" . 'copilot-accept-completion)
 ;;          ("TAB" . 'copilot-accept-completion)))
 
-;; Github codespaces
-;; (use-package! codespaces
-;;   :config
-;;   ;; (codespaces-setup)
-;;   (unless (executable-find "gh")
-;;     (user-error "Could not find `gh' program in your PATH"))
-;;   (unless (featurep 'json)
-;;     (user-error "Emacs JSON support not available; your Emacs is too old"))
-;;   (let ((ghcs (assoc "ghcs" tramp-methods))
-;;         (ghcs-methods '((tramp-login-program "gh")
-;;                         (tramp-login-args (("codespace") ("ssh") ("-c") ("%h")))
-;;                         (tramp-remote-shell "/bin/bash")
-;;                         (tramp-remote-shell-login ("-l"))
-;;                         (tramp-remote-shell-args ("-c")))))
-;;     ;; just for debugging the methods
-;;     (if ghcs (setcdr ghcs ghcs-methods)
-;;       (push (cons "ghcs" ghcs-methods) tramp-methods)))
-;;   (tramp-set-completion-function "ghcs" '((codespaces-tramp-completion ""))))
-
 ;; (use-package! tramp
 ;;   :config
 ;;   (add-to-list 'tramp-remote-path 'tramp-own-remote-path))
@@ -322,27 +318,13 @@
                     (matcher . "CaseSensitive")))))
   )
 
-;; (use-package! gptel
-;;   :config
-;;   )
-
-;; (use-package! lsp
-;;   :custom
-;;   ;; enable gopls over tramp
-;;   (lsp-gopls-server-args '("-remote=auto"))
-;;   (lsp-go-gopls-server-path "/Users/deepakk/go/bin/gopls")
-;;   ;; (lsp-register-client
-;;   ;;  (make-lsp-client :new-connection (lsp-tramp-connection "/go/bin/gopls")
-;;   ;;                   :major-modes '(go-mode)
-;;   ;;                   :remote? t
-;;   ;;                   :server-id 'gopls-remote))
-;;   ;; (add-to-list 'tramp-remote-path 'tramp-own-remote-path)
-;;   )
-
-;; enable completion in insert mode
-                                        ;(customize-set-variable 'copilot-enable-predicates '(evil-insert-state-p))
-
-;; insers that things
+(use-package! gptel
+  :config
+  ;; (add-to-list 'gptel-directives
+  ;;              '(debugging . "You are a large language model and a skilled debugger. Assist in identifying and fixing issues in code, providing explanations when necessary."))
+  (setq! gptel-default-mode 'org-mode)
+  (setq! gptel-org-branching-context t)
+  )
 
 
 ;; keybindings
@@ -355,10 +337,14 @@
  "C-;" #'er/expand-region
  "C-'" #'er/contract-region
  "C-x d" #'dirvish
+ :desc "gptel-send" "C-c RET" #'gptel-send
  :n "F19" #'+org/toggle-last-clock
  :leader
+ :desc "M-x" "SPC" #'execute-extended-command
+ :desc "Dee Agenda" "o a d" (lambda () (interactive) (org-agenda nil "d"))
+ :desc "gptel" "RET" #'gptel
  "b o" #'switch-to-buffer-other-window
- :desc "Find org file" "n f" #'dee/helm-org-files
+ ;; :desc "Find org file" "n f" #'dee/helm-org-files
  :desc "Open journal" "n j" (lambda () (interactive) (find-file (concat org-directory "/journal.org")))
  "w H" #'evil-window-move-far-left
  "w L" #'evil-window-move-far-right
@@ -386,7 +372,7 @@
 (use-package! gorepl-mode
   :hook (go-mode . gorepl-mode))
 
-;; Scrolling other widnow fix for pdf-mode
+;; Scrolling other window fix for pdf-mode
 (defun dee/scroll-other-window ()
   (interactive)
   (let* ((wind (other-window-for-scrolling))
@@ -407,15 +393,15 @@
             (other-window 1)))
       (scroll-other-window-down 2))))
 
-(defun dee/helm-org-files ()
-  "Find org file"
-  (interactive)
-  (helm :sources (helm-build-sync-source "Org Files"
-                   :candidates (lambda ()
-                                 (mapcar (lambda (x) (cons (file-name-nondirectory x) x))
-                                         (directory-files-recursively org-directory "\.org$")))
-                   :action '(("Find file" . (lambda (candidate)
-                                              (find-file candidate)))))))
+;; (defun dee/helm-org-files ()
+;;   "Find org file"
+;;   (interactive)
+;;   (helm :sources (helm-build-sync-source "Org Files"
+;;                    :candidates (lambda ()
+;;                                  (mapcar (lambda (x) (cons (file-name-nondirectory x) x))
+;;                                          (directory-files-recursively org-directory "\.org$")))
+;;                    :action '(("Find file" . (lambda (candidate)
+;;                                               (find-file candidate)))))))
 
 (use-package! sqlformat
   :custom
@@ -486,7 +472,7 @@
                                             (match-string 1))))
                           (insert "* " file-title "\n")
                           (insert (replace-regexp-in-string "^" "  " file-contents))
-                          (insert "\n\n")
+
                           ))
                       ;; write file in org-directory
                       (write-file (concat org-directory "/" merged-file))
@@ -497,3 +483,64 @@
 
 ;; run function asynchrounously
 ;; (async-start dee/org-export-all-html)
+
+(defun dee/gptel-rewrite (bounds &optional directive)
+  (interactive
+   (list
+    (cond
+     ((use-region-p) (cons (region-beginning) (region-end)))
+     ((derived-mode-p 'text-mode)
+      (list (bounds-of-thing-at-point 'sentence)))
+     (t (cons (line-beginning-position) (line-end-position))))
+    (let ((choice (completing-read "Choose directive: "
+                                   '("Rewrite professionally"
+                                     "Elaborate and simplify"
+                                     "Rewrite Git message"
+                                     "Custom"))))
+      (cond
+       ((string= choice "Rewrite professionally")
+        "You are a prose editor. Rewrite my prompt more professionally.")
+       ((string= choice "Elaborate and simplify")
+        "You are a prose editor. Elaborate and simplify my prompt.")
+       ((string= choice "Rewrite Git message")
+        "Rewrite the following Git commit message to be more clear and concise. Ensure the first line is a title limited to 50 characters, followed by a more detailed description")
+       (t
+        (read-string "Enter your custom directive: "))))))
+  (gptel-request
+      (buffer-substring-no-properties (car bounds) (cdr bounds)) ;the prompt
+    :system (or directive "You are a prose editor. Rewrite my prompt more professionally.")
+    :buffer (current-buffer)
+    :context (cons (set-marker (make-marker) (car bounds))
+                   (set-marker (make-marker) (cdr bounds)))
+    :callback
+    (lambda (response info)
+      (if (not response)
+          (message "ChatGPT response failed with: %s" (plist-get info :status))
+        (let* ((bounds (plist-get info :context))
+               (beg (car bounds))
+               (end (cdr bounds))
+               (buf (plist-get info :buffer)))
+          (with-current-buffer buf
+            (save-excursion
+              (goto-char end)
+              (insert "\n-----\n" response)
+              (set-marker beg nil)
+              (set-marker end nil)
+              (message "Rewrote text"))))))))
+
+(defun dee/org-add-journal-entry ()
+  "Add a journal entry when a repeated task is marked as done and print the task name."
+  (save-excursion (let ((isDone (string= "TODO" (org-get-todo-state)))
+                        (task (org-get-heading t t t t))
+                        (isScheduled (org-get-scheduled-time (point))))
+
+                    (when (and isDone isScheduled)
+                      (message "adding to journal")
+                      (org-reverse-datetree-goto-date-in-file)
+                      (or (bolp) (insert "\n")) ;; Ensure a new line if not at the beginning of a line
+                      (insert (concat "**** " "Finished scheduled task: " task))
+                      )
+                    )))
+
+
+(add-hook 'org-after-todo-state-change-hook 'dee/org-add-journal-entry)

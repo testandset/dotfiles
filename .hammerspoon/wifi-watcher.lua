@@ -1,7 +1,7 @@
 -- Wifi watcher
 -- Mutes laptop when not connected on zion
 wifiWatcher = nil
-homeSSID = "zion"
+homeSSID = "Tele2-99b989"
 lastSSID = hs.wifi.currentNetwork()
 
 function ssidChangedCallback()

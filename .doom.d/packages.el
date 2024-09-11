@@ -50,7 +50,7 @@
 ;; ...Or *all* packages (NOT RECOMMENDED; will likely break things)
                                         ;(unpin! t)
 
-(package! beacon);; blink cursor on jumps
+;; (package! beacon);; blink cursor on jumps
 (package! puppet-mode)
 (package! protobuf-mode)
 
@@ -90,12 +90,7 @@
            :files ("*.el")))
 
 (package! org-download)
-;; (package! org-modern) - missing icons, doesn't work
+;; (package! org-modern)
 (package! org-reverse-datetree)
 (package! ox-epub)
-;; (package! gptel)
-
-;; add chatgpt from https://github.com/emacs-openai/openai
-;; (package! chatgpt
-;;   :recipe (:host github :repo "emacs-openai/openai/chatgpt"
-;;            :files ("*.el" "LICENSE")))
+(package! gptel)
